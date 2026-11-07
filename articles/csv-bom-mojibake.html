@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSV 用 Excel 打开是乱码，问题出在 BOM - 顺手工具箱</title>
+<meta name="description" content="Excel 打开 CSV 乱码、第一列表头取不到值，两个根因和解法。">
+<link rel="stylesheet" href="/assets/style.css">
+<!-- ADSENSE_HEAD: 审核通过后在这里放 AdSense 代码 -->
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="/index.html">顺手<i>工具箱</i></a>
+    <nav class="nav"><a href="/index.html">首页</a><a href="/tools/index.html">全部工具</a><a href="/articles/index.html" class="on">使用笔记</a><a href="/about.html">关于</a></nav>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+<div class="crumb"><a href="/index.html">首页</a> / <a href="/articles/index.html">使用笔记</a></div>
+<h1>CSV 用 Excel 打开是乱码，问题出在 BOM</h1>
+<p class="hint" style="margin-top:0">2026-11-08　·　Demo_Li</p>
+<div class="doc">
+<p>从系统导出的 CSV，用 Excel 打开中文全变成乱码，用文本编辑器打开又是正常的。这不是文件坏了，是编码和 BOM 的问题。</p>
+<h2>一、编码：UTF-8 还是 GBK</h2>
+<p>Excel 在中文 Windows 上打开 CSV 时，默认按系统代码页（GBK/936）解释，不按 UTF-8。文件是 UTF-8 存的，Excel 用 GBK 去读，中文自然就散了。</p>
+<p>三个解法，按可靠性排序：</p>
+<ol>
+<li>加 BOM。在文件开头写入三个字节 <code>EF BB BF</code>，Excel 看到就会按 UTF-8 解释。兼容性最好，代价是被其他程序读取时，第一个字段名前面会多一个看不见的字符。</li>
+<li>导出成 GBK。老系统常用，缺点是非中文环境打开还是乱码。</li>
+<li>用「数据 → 从文本/CSV」导入，手动指定编码为 UTF-8。最规范，但要多点几步。</li>
+</ol>
+<h2>二、BOM 带来的连锁问题</h2>
+<p>加了 BOM 之后，用代码读文件会踩坑：</p>
+<pre><code>const rows = csv.split(&quot;\n&quot;);
+const header = rows[0].split(&quot;,&quot;); // 第一个字段名前面其实是 BOM</code></pre>
+<p>于是用字段名取值会拿到 <code>undefined</code>，而打印键名看着完全正常，因为 BOM 是不可见字符。这类问题很难从输出里看出来。</p>
+<p>处理办法是读取后立刻剥掉：</p>
+<pre><code>const text = raw.replace(/^\uFEFF/, &quot;&quot;);</code></pre>
+<p>本工具的 CSV 转 JSON 会自动做这一步，所以带 BOM 的文件也能正确取出表头。</p>
+<h2>三、字段里有逗号、引号和换行</h2>
+<p>CSV 不是「用逗号分隔」这么简单。按 RFC 4180，字段可以包含逗号、换行，前提是用双引号包起来；字段内部的引号写成两个双引号。</p>
+<pre><code>name,note
+张三,&quot;会说，也会写&quot;
+李四,&quot;他说&quot;&quot;这条要改&quot;&quot;，然后就走了&quot;</code></pre>
+<p>如果解析只是按逗号切分，这两种情况都会错位，而且错位之后整行的列都往后偏，看起来像数据本身有问题。用标准解析器，或者至少处理引号状态机。</p>
+<h2>四、数字被 Excel 吃掉</h2>
+<p>比乱码更隐蔽的问题是：超过 11 位的数字（手机号、订单号）在 Excel 里会被转成科学计数法，15 位以上直接丢精度，变成一串 0。</p>
+<p>CSV 里没法声明这一列是文本，Excel 也不认。可行的办法是在数字前加制表符或单引号让它变成文本，或者干脆不交给 Excel 处理。</p>
+<p>这类问题在数据交付时经常被忽略：你发出去的文件看起来没问题，对方打开后订单号全变了，然后来找你。</p>
+</div>
+<div class="card" style="margin-top:28px">
+  <b>这页提到的工具</b>
+  <p class="hint" style="margin:6px 0 0"><a href="/tools/index.html">打开全部工具 →</a></p>
+</div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div>© <span id="year">2026</span> 顺手工具箱　·　不用登录、不上传服务器，浏览器里直接算完</div>
+    <nav>
+      <a href="/about.html">关于</a>
+      <a href="/contact.html">联系</a>
+      <a href="/privacy.html">隐私政策</a>
+      <a href="/articles/index.html">使用笔记</a>
+    </nav>
+  </div>
+</footer>
+<script src="/assets/tools.js"></script>
+</body>
+</html>

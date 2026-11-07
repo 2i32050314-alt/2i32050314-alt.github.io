@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>顺手工具箱 - 不用登录、不上传服务器，浏览器里直接算完</title>
+<meta name="description" content="免费在线工具箱：JSON 格式化、时间戳转换、Base64 编解码、颜色转换、CSV 转 JSON、图片压缩、哈希校验。全部本地运行，不上传文件。">
+<link rel="stylesheet" href="/assets/style.css">
+<!-- ADSENSE_HEAD: 审核通过后在这里放 AdSense 代码 -->
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="/index.html">顺手<i>工具箱</i></a>
+    <nav class="nav"><a href="/index.html" class="on">首页</a><a href="/tools/index.html">全部工具</a><a href="/articles/index.html">使用笔记</a><a href="/about.html">关于</a></nav>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+<h1>常用的那些小工具，<br>不用再开一堆网页了</h1>
+<p class="lead">不用登录、不上传服务器，浏览器里直接算完。全部免费、无广告位遮挡、不需要注册。</p>
+<div class="grid"><a class="tool-card" href="/tools/json.html"><em>🧩</em><b>JSON 格式化 / 校验</b><span>粘贴一段 JSON，立刻看出哪里多了一个逗号</span></a><a class="tool-card" href="/tools/timestamp.html"><em>⏱</em><b>时间戳转换</b><span>秒 / 毫秒 / 日期互转，顺手给出「几天前」</span></a><a class="tool-card" href="/tools/base64.html"><em>🔐</em><b>Base64 / URL 编解码</b><span>中文不会乱码的 Base64，一并处理 URL 参数</span></a><a class="tool-card" href="/tools/case.html"><em>🔤</em><b>命名风格转换</b><span>camelCase / snake_case / kebab-case 一次转好</span></a><a class="tool-card" href="/tools/color.html"><em>🎨</em><b>颜色格式转换</b><span>HEX / RGB / HSL 互转，顺带算文字可读性</span></a><a class="tool-card" href="/tools/csvjson.html"><em>📊</em><b>CSV ↔ JSON</b><span>Excel 复制出来的表格，直接变 JSON</span></a></div>
+<p><a href="/tools/index.html">查看全部 11 个工具 →</a></p>
+
+<h2>最近的使用笔记</h2>
+<ul class="posts"><li><a href="/articles/base64-misconceptions.html"><b>Base64 的三个误解：它不是加密，还会让体积变大</b></a><time>2026-11-08</time><p>中文乱码、体积膨胀、URL 里要不要换字符表，三个常见问题的机制解释。</p></li><li><a href="/articles/chinese-word-count.html"><b>中文「字数」到底怎么算</b></a><time>2026-11-08</time><p>Word、公众号、微博、论文各有一套口径。投出去之前先确认对方按哪个算。</p></li><li><a href="/articles/color-contrast.html"><b>为什么你的灰色小字看不见</b></a><time>2026-11-08</time><p>对比度不是审美问题，是可读性的硬指标。WCAG 的 4.5:1 从哪来、怎么算、什么时候可以放宽。</p></li><li><a href="/articles/csv-bom-mojibake.html"><b>CSV 用 Excel 打开是乱码，问题出在 BOM</b></a><time>2026-11-08</time><p>Excel 打开 CSV 乱码、第一列表头取不到值，两个根因和解法。</p></li></ul>
+
+<h2>同一套东西做出来的其他站点</h2>
+<p>都是静态页，同样不上传数据、不需要登录。</p>
+<div class="grid">
+  <a class="tool-card" href="/zhikao/"><em>📋</em><b>职考条件库</b><span>江苏等地的职业资格考试报考条件，按地区分册整理</span></a>
+  <a class="tool-card" href="/salary/"><em>🧮</em><b>工资核对</b><span>把工资条上的各项拆开算一遍，看哪一项对不上</span></a>
+  <a class="tool-card" href="/hongbao/"><em>🧧</em><b>红包上写什么</b><span>各种场合的贺词参考，可离线使用</span></a>
+  <a class="tool-card" href="/labor-fee/"><em>💼</em><b>劳务费计算器</b><span>按次发放的劳务报酬，算清应发与代扣</span></a>
+</div>
+
+<h2>这个站是怎么来的</h2>
+<p>做开发和写东西的时候，一天要在十几个「在线工具」站之间来回跳：有的弹广告弹到看不见输入框，有的把粘贴的 JSON 传去服务器再返回，有的连 HTTPS 都没有。于是把最常用的十几个功能重写了一遍，全部用浏览器原生 API 实现，代码不到一个打包文件那么大，断网也能用。</p>
+<p>它不会有会员、不会有「解锁高级功能」，也不收集你粘贴的任何内容——技术上就做不到，因为所有计算都发生在你的浏览器里。</p>
+
+<h2>能保证什么，不能保证什么</h2>
+<ul>
+<li><b>能保证</b>：不上传文件、不记录输入、不要求登录；工具结果与主流实现一致（哈希用 WebCrypto，颜色转换按 sRGB 公式）。</li>
+<li><b>不能保证</b>：不能替代专业工具。比如图片压缩对超大图会受浏览器内存限制，正则高亮超过 500 处会截断显示。</li>
+<li><b>会持续改</b>：哪个工具用着别扭，页脚有联系方式，说一声就加。</li>
+</ul>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div>© <span id="year">2026</span> 顺手工具箱　·　不用登录、不上传服务器，浏览器里直接算完</div>
+    <nav>
+      <a href="/about.html">关于</a>
+      <a href="/contact.html">联系</a>
+      <a href="/privacy.html">隐私政策</a>
+      <a href="/articles/index.html">使用笔记</a>
+    </nav>
+  </div>
+</footer>
+<script src="/assets/tools.js"></script>
+</body>
+</html>

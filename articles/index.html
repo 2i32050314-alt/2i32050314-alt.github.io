@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>使用笔记 - 顺手工具箱</title>
+<meta name="description" content="关于这些工具怎么用、什么场景用、有哪些坑的实操笔记。">
+<link rel="stylesheet" href="/assets/style.css">
+<!-- ADSENSE_HEAD: 审核通过后在这里放 AdSense 代码 -->
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="/index.html">顺手<i>工具箱</i></a>
+    <nav class="nav"><a href="/index.html">首页</a><a href="/tools/index.html">全部工具</a><a href="/articles/index.html" class="on">使用笔记</a><a href="/about.html">关于</a></nav>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+<h1>使用笔记</h1>
+<p class="lead">每个工具背后都有一篇说明：什么场景用、参数怎么选、哪里容易踩坑。不是「点击这里即可完成」那种废话。</p>
+<ul class="posts"><li><a href="/articles/base64-misconceptions.html"><b>Base64 的三个误解：它不是加密，还会让体积变大</b></a><time>2026-11-08</time><p>中文乱码、体积膨胀、URL 里要不要换字符表，三个常见问题的机制解释。</p></li><li><a href="/articles/chinese-word-count.html"><b>中文「字数」到底怎么算</b></a><time>2026-11-08</time><p>Word、公众号、微博、论文各有一套口径。投出去之前先确认对方按哪个算。</p></li><li><a href="/articles/color-contrast.html"><b>为什么你的灰色小字看不见</b></a><time>2026-11-08</time><p>对比度不是审美问题，是可读性的硬指标。WCAG 的 4.5:1 从哪来、怎么算、什么时候可以放宽。</p></li><li><a href="/articles/csv-bom-mojibake.html"><b>CSV 用 Excel 打开是乱码，问题出在 BOM</b></a><time>2026-11-08</time><p>Excel 打开 CSV 乱码、第一列表头取不到值，两个根因和解法。</p></li><li><a href="/articles/hash-checksum.html"><b>哈希校验怎么用才不算白做</b></a><time>2026-11-08</time><p>SHA-256 校验下载文件、比对配置是否一致。哪些算法能用，哪些只是心理安慰。</p></li><li><a href="/articles/image-compress-bigger.html"><b>图片压完反而更大？先看它被压过几次</b></a><time>2026-11-08</time><p>二次有损压缩、格式选择和尺寸优先，三个影响结果的真实因素。</p></li><li><a href="/articles/json-parse-errors.html"><b>粘贴的 JSON 老是报错？九成是这三个原因</b></a><time>2026-11-08</time><p>JSON.parse 的报错只说哪里错，不说为什么错。把三类常见错误理清，比反复试更快。</p></li><li><a href="/articles/password-entropy.html"><b>密码长度比复杂度更重要，这是算术问题</b></a><time>2026-11-08</time><p>熵怎么算、为什么 20 位纯小写比 10 位混合更强、密码管理器到底解决什么问题。</p></li><li><a href="/articles/regex-surprises.html"><b>正则里几个反直觉的行为</b></a><time>2026-11-08</time><p>贪婪匹配、g 标志的状态、分组编号，三个让正则“测着好好的，上线就错”的原因。</p></li><li><a href="/articles/timestamp-8-hours.html"><b>时间戳差 8 小时，问题通常不在时间戳</b></a><time>2026-11-08</time><p>服务器日志、数据库、前端显示对不上，多半是 UTC 和本地时区混用了。这里说清怎么判断、在哪一层修。</p></li></ul>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div>© <span id="year">2026</span> 顺手工具箱　·　不用登录、不上传服务器，浏览器里直接算完</div>
+    <nav>
+      <a href="/about.html">关于</a>
+      <a href="/contact.html">联系</a>
+      <a href="/privacy.html">隐私政策</a>
+      <a href="/articles/index.html">使用笔记</a>
+    </nav>
+  </div>
+</footer>
+<script src="/assets/tools.js"></script>
+</body>
+</html>

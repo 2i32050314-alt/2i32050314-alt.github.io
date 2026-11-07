@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>字数与阅读时长 - 顺手工具箱</title>
+<meta name="description" content="中文字数、英文单词、段落数，一次看清 不用登录、不上传服务器，浏览器里直接算完">
+<link rel="stylesheet" href="/assets/style.css">
+<!-- ADSENSE_HEAD: 审核通过后在这里放 AdSense 代码 -->
+</head>
+<body data-tool="textcount">
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="/index.html">顺手<i>工具箱</i></a>
+    <nav class="nav"><a href="/index.html">首页</a><a href="/tools/index.html" class="on">全部工具</a><a href="/articles/index.html">使用笔记</a><a href="/about.html">关于</a></nav>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+<div class="crumb"><a href="/index.html">首页</a> / <a href="/tools/index.html">全部工具</a> / 字数与阅读时长</div>
+<h1>📝 字数与阅读时长</h1>
+<p class="lead">中文字数、英文单词、段落数，一次看清</p>
+<div class="panel" style="margin:14px 0">
+
+<label class="f">粘贴文本</label>
+<textarea id="tc-in" style="min-height:160px" placeholder="把稿子贴进来……"></textarea>
+<div class="stats">
+  <div class="stat"><b id="tc-words">0</b><span>字数（中文字 + 英文词）</span></div>
+  <div class="stat"><b id="tc-chars">0</b><span>字符数（含空格）</span></div>
+  <div class="stat"><b id="tc-nochars">0</b><span>字符数（不含空格）</span></div>
+  <div class="stat"><b id="tc-cjk">0</b><span>中文字</span></div>
+  <div class="stat"><b id="tc-en">0</b><span>英文单词</span></div>
+  <div class="stat"><b id="tc-num">0</b><span>数字个数</span></div>
+  <div class="stat"><b id="tc-paras">0</b><span>段落</span></div>
+  <div class="stat"><b id="tc-lines">0</b><span>行数</span></div>
+  <div class="stat"><b id="tc-time">—</b><span>预计阅读</span></div>
+</div>
+<p class="hint">字数按「中文字 + 英文单词」计；阅读时长按中文每分钟 400 字估算。</p>
+
+</div>
+<div class="doc">
+<h2>字数的口径差异</h2>
+<p>不同平台对「字数」的定义完全不同：Word 算的是「汉字 + 英文单词」，微信公众号按字符算（含标点），微博按字节算（一个汉字算 2 个），论文里通常按「字符数（不计空格）」。这个工具同时给出多个口径，就是为了让你按目标平台的要求取数，而不是拿一个数字到处套。</p>
+<h2>阅读时长的估算依据</h2>
+<p>按中文每分钟 400 字计算（专业内容约 300 字/分钟，轻松内容可到 500）。这个数字只用于粗略判断篇幅，别当成精确指标。</p>
+<h2>一个写作上的用法</h2>
+<p>看「段落数 ÷ 字数」。如果一篇 2000 字的文章只有 3 个段落，手机上会变成一大坨黑压压的文字；反过来 2000 字有 40 段，又会显得零碎。经验值是每段 80–150 字。</p>
+<h2>注意</h2>
+<p>统计在浏览器本地完成，稿子不会上传。但如果你在有输入法联想、云同步的环境里打字，内容可能已经被输入法厂商同步——那是输入法的问题，不是页面的问题。</p>
+<div class="faq"><details><summary>中文字数按什么算？</summary><p>每个汉字算 1 个字，英文按单词算，数字每个算 1 个。这是 Word 和多数平台的通用口径。</p></details><details><summary>为什么和 Word 的统计差几个字？</summary><p>Word 会把某些符号（如连续的破折号、域代码）算作字。差异通常很小，投平台时以平台口径为准。</p></details><details><summary>能统计关键词密度吗？</summary><p>当前不提供。密度这个指标本身意义有限，搜索引擎早已不按它排名。</p></details></div>
+</div>
+<div class="card" style="margin-top:26px">
+  <b>其他工具</b>
+  <div class="grid" style="margin-top:10px">
+    <a class="tool-card" href="/tools/json.html"><em>🧩</em><b>JSON 格式化 / 校验</b><span>粘贴一段 JSON，立刻看出哪里多了一个逗号</span></a><a class="tool-card" href="/tools/timestamp.html"><em>⏱</em><b>时间戳转换</b><span>秒 / 毫秒 / 日期互转，顺手给出「几天前」</span></a><a class="tool-card" href="/tools/base64.html"><em>🔐</em><b>Base64 / URL 编解码</b><span>中文不会乱码的 Base64，一并处理 URL 参数</span></a><a class="tool-card" href="/tools/case.html"><em>🔤</em><b>命名风格转换</b><span>camelCase / snake_case / kebab-case 一次转好</span></a><a class="tool-card" href="/tools/color.html"><em>🎨</em><b>颜色格式转换</b><span>HEX / RGB / HSL 互转，顺带算文字可读性</span></a><a class="tool-card" href="/tools/csvjson.html"><em>📊</em><b>CSV ↔ JSON</b><span>Excel 复制出来的表格，直接变 JSON</span></a>
+  </div>
+</div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div>© <span id="year">2026</span> 顺手工具箱　·　不用登录、不上传服务器，浏览器里直接算完</div>
+    <nav>
+      <a href="/about.html">关于</a>
+      <a href="/contact.html">联系</a>
+      <a href="/privacy.html">隐私政策</a>
+      <a href="/articles/index.html">使用笔记</a>
+    </nav>
+  </div>
+</footer>
+<script src="/assets/tools.js"></script>
+</body>
+</html>

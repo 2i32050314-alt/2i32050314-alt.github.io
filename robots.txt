@@ -1,0 +1,11 @@
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
+User-agent: *
+Allow: /
+Disallow: /assets/
+
+Sitemap: https://2i32050314-alt.github.io/sitemap.xml

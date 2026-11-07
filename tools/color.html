@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>颜色格式转换 - 顺手工具箱</title>
+<meta name="description" content="HEX / RGB / HSL 互转，顺带算文字可读性 不用登录、不上传服务器，浏览器里直接算完">
+<link rel="stylesheet" href="/assets/style.css">
+<!-- ADSENSE_HEAD: 审核通过后在这里放 AdSense 代码 -->
+</head>
+<body data-tool="color">
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="/index.html">顺手<i>工具箱</i></a>
+    <nav class="nav"><a href="/index.html">首页</a><a href="/tools/index.html" class="on">全部工具</a><a href="/articles/index.html">使用笔记</a><a href="/about.html">关于</a></nav>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+<div class="crumb"><a href="/index.html">首页</a> / <a href="/tools/index.html">全部工具</a> / 颜色格式转换</div>
+<h1>🎨 颜色格式转换</h1>
+<p class="lead">HEX / RGB / HSL 互转，顺带算文字可读性</p>
+<div class="panel" style="margin:14px 0">
+
+<div class="row">
+  <div class="grow"><label class="f">输入颜色</label><input type="text" id="color-in" value="#1a6ef5" placeholder="#1a6ef5 / rgb(26,110,245) / hsl(220,90%,53%)"></div>
+  <div><label class="f">或直接取色</label><input type="color" id="color-pick" value="#1a6ef5" style="width:64px;height:40px;padding:2px;border:1px solid #e3e6ec;border-radius:9px;background:#fff"></div>
+  <button id="color-run" style="align-self:flex-end">转换</button>
+  <button class="ghost" id="color-copy" style="align-self:flex-end">复制</button>
+</div>
+<div id="color-preview" style="background:#1a6ef5;height:72px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:14px 0;border:1px solid #e3e6ec">
+  <span style="color:#fff;font-size:15px" id="color-label">示例文字</span></div>
+<pre class="out" id="color-out"></pre>
+<p class="hint" id="color-msg"></p>
+
+</div>
+<div class="doc">
+<h2>三套表示法各自解决什么</h2>
+<ul>
+<li><strong>HEX</strong>：最省字符，写 CSS 最常用，但看不出明暗。</li>
+<li><strong>RGB</strong>：跟屏幕像素直接对应，做透明度叠加、图像处理时直观。</li>
+<li><strong>HSL</strong>：色相 + 饱和度 + 亮度。想「让这个蓝再深一点」，改 HSL 的 L 就行；用 HEX 得重新猜十六进制。</li>
+</ul>
+<h2>顺手算的对比度</h2>
+<p>工具会给出这个底色上白字和黑字的对比度，并按 WCAG 标准标注：正文需要 <strong>4.5:1</strong> 以上（AA），大字（18pt 以上或 14pt 粗体）需要 <strong>3:1</strong>，AAA 要求 7:1。这不是形式主义——对比度不足的可读性问题在户外和老年用户身上非常明显。</p>
+<h2>注意色域</h2>
+<p>HSL 转 RGB 用的是 sRGB 公式，和浏览器渲染一致。如果你在做印刷设计，需要的是 CMYK，色域完全不同，不要用这里的值直接交付给印厂。</p>
+<h2>一个实用技巧</h2>
+<p>取色器支持从屏幕上拾取颜色（部分浏览器支持 EyeDropper API，Chrome 已支持）。做设计还原时比截图后用吸管工具更准。</p>
+<div class="faq"><details><summary>为什么浏览器里看着一样的颜色，代码里数值不同？</summary><p>可能是色彩配置文件（Display P3 与 sRGB）差异，也可能是半透明叠加的结果。</p></details><details><summary>HSL 的亮度 50% 就是「正常亮度」吗？</summary><p>不是。HSL 的 L 是到黑白的中点在数学上的位置，不是感知亮度。人眼对绿色更敏感，同样 L 值绿色看起来更亮。</p></details><details><summary>能转 CMYK 吗？</summary><p>不能准确转换——CMYK 依赖具体印刷设备和纸张，需要 ICC 配置文件，网页工具给不出可信结果。</p></details></div>
+</div>
+<div class="card" style="margin-top:26px">
+  <b>其他工具</b>
+  <div class="grid" style="margin-top:10px">
+    <a class="tool-card" href="/tools/json.html"><em>🧩</em><b>JSON 格式化 / 校验</b><span>粘贴一段 JSON，立刻看出哪里多了一个逗号</span></a><a class="tool-card" href="/tools/timestamp.html"><em>⏱</em><b>时间戳转换</b><span>秒 / 毫秒 / 日期互转，顺手给出「几天前」</span></a><a class="tool-card" href="/tools/base64.html"><em>🔐</em><b>Base64 / URL 编解码</b><span>中文不会乱码的 Base64，一并处理 URL 参数</span></a><a class="tool-card" href="/tools/case.html"><em>🔤</em><b>命名风格转换</b><span>camelCase / snake_case / kebab-case 一次转好</span></a><a class="tool-card" href="/tools/csvjson.html"><em>📊</em><b>CSV ↔ JSON</b><span>Excel 复制出来的表格，直接变 JSON</span></a><a class="tool-card" href="/tools/regex.html"><em>🔍</em><b>正则表达式测试</b><span>边写边看匹配位置和分组，不必来回改代码</span></a>
+  </div>
+</div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div>© <span id="year">2026</span> 顺手工具箱　·　不用登录、不上传服务器，浏览器里直接算完</div>
+    <nav>
+      <a href="/about.html">关于</a>
+      <a href="/contact.html">联系</a>
+      <a href="/privacy.html">隐私政策</a>
+      <a href="/articles/index.html">使用笔记</a>
+    </nav>
+  </div>
+</footer>
+<script src="/assets/tools.js"></script>
+</body>
+</html>

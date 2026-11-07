@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>为什么你的灰色小字看不见 - 顺手工具箱</title>
+<meta name="description" content="对比度不是审美问题，是可读性的硬指标。WCAG 的 4.5:1 从哪来、怎么算、什么时候可以放宽。">
+<link rel="stylesheet" href="/assets/style.css">
+<!-- ADSENSE_HEAD: 审核通过后在这里放 AdSense 代码 -->
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="/index.html">顺手<i>工具箱</i></a>
+    <nav class="nav"><a href="/index.html">首页</a><a href="/tools/index.html">全部工具</a><a href="/articles/index.html" class="on">使用笔记</a><a href="/about.html">关于</a></nav>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+<div class="crumb"><a href="/index.html">首页</a> / <a href="/articles/index.html">使用笔记</a></div>
+<h1>为什么你的灰色小字看不见</h1>
+<p class="hint" style="margin-top:0">2026-11-08　·　Demo_Li</p>
+<div class="doc">
+<p>设计稿上「浅灰说明文字配白底」看着很高级，投到手机上在户外就完全看不见。这不是主观感受的问题，可以量化。</p>
+<h2>对比度怎么算</h2>
+<p>WCAG 的对比度公式是：</p>
+<pre><code>(L1 + 0.05) / (L2 + 0.05)</code></pre>
+<p>其中 L 是相对亮度，不是 RGB 的简单平均，而是先把每个通道按 sRGB 的伽马曲线转成线性值，再按 0.2126、0.7152、0.0722 加权。绿色权重最高，因为人眼对绿色最敏感。</p>
+<p>这个公式解释了为什么同样的「50% 灰」在不同色相上观感差很多：亮度不是按通道平均值算的。</p>
+<h2>三条线</h2>
+<ul>
+<li>正文文字：4.5:1（AA）</li>
+<li>大字（18pt 以上，或 14pt 粗体以上）：3:1</li>
+<li>非文字元素（图标、输入框边框）：3:1</li>
+<li>AAA 级对正文要求 7:1</li>
+</ul>
+<p>「18pt」约等于 24px，「14pt 粗体」约等于 18.66px 的粗体。换算时用 px 更容易对照。</p>
+<h2>常见的踩坑点</h2>
+<p>浅灰正文。<code>#999</code> 配白底大约是 2.85:1，达不到 AA。<code>#757575</code> 配白底约 4.6:1，刚好达标。差一级灰，可读性差一截。</p>
+<p>彩色按钮上的白字。明黄、浅绿、橙色按钮上的白字对比度通常只有 2:1 左右。要么改成深色字，要么把按钮底色调深。</p>
+<p>半透明叠加。看着是「10% 黑」，实际叠加后的亮度取决于底层颜色。用工具把最终颜色算出来再判断，不要凭肉眼估。</p>
+<p>禁用状态。禁用文字通常被要求「看起来不可用」，但仍应保证 3:1，否则用户不知道该处有内容。</p>
+<h2>何时可以放宽</h2>
+<p>装饰性文字、Logo、纯展示的品牌标语不受这几条约束。图片上的文字不受控于 CSS，但如果文字是关键信息，仍然要保证底图足够深或者加遮罩。</p>
+<h2>顺手能做的事</h2>
+<p>本工具会把 HEX、RGB、HSL 和黑/白文字的对比度一起算出来，并直接给出「该用白字还是黑字」的判断。写完一套配色，逐条过一遍比调完再说要省事。</p>
+</div>
+<div class="card" style="margin-top:28px">
+  <b>这页提到的工具</b>
+  <p class="hint" style="margin:6px 0 0"><a href="/tools/index.html">打开全部工具 →</a></p>
+</div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div>© <span id="year">2026</span> 顺手工具箱　·　不用登录、不上传服务器，浏览器里直接算完</div>
+    <nav>
+      <a href="/about.html">关于</a>
+      <a href="/contact.html">联系</a>
+      <a href="/privacy.html">隐私政策</a>
+      <a href="/articles/index.html">使用笔记</a>
+    </nav>
+  </div>
+</footer>
+<script src="/assets/tools.js"></script>
+</body>
+</html>

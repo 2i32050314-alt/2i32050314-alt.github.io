@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>劳务费计算器 · 增值税 + 个税（2026 年 11 月起口径）</title>
+<meta name="description" content="个人劳务费代扣增值税、城建税与个人所得税计算器，支持含税应发、不含税销售额、到手金额三种口径互算。" />
+<style>
+:root {
+  --brand: #1f6feb;
+  --brand-dark: #14489c;
+  --brand-soft: #e8f0fe;
+  --ink: #14202b;
+  --ink-2: #47586a;
+  --ink-3: #8a99a8;
+  --line: #e3e9f0;
+  --bg: #f4f6fa;
+  --card: #ffffff;
+  --ok: #12805c;
+  --warn: #b45309;
+  --warn-bg: #fff7e6;
+  --money: #b3261e;
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.6 "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.topbar {
+  background: linear-gradient(104deg, var(--brand-dark), var(--brand) 62%, #3f8cf5);
+  color: #fff;
+  padding: 18px 0 20px;
+}
+.topbar .inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 18px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.brand { display: flex; align-items: baseline; gap: 12px; }
+.brand b { font-size: 13px; font-weight: 600; opacity: .78; letter-spacing: .04em; }
+.brand h1 { margin: 0; font-size: 25px; font-weight: 700; letter-spacing: .01em; }
+.topbar .sub { font-size: 13px; opacity: .85; }
+.topbar .date { font-size: 13px; opacity: .85; white-space: nowrap; }
+
+main { max-width: 1080px; margin: 22px auto 60px; padding: 0 18px; }
+
+.notice {
+  background: #fff8e6;
+  border: 1px solid #f3d9a4;
+  border-left: 4px solid #d97706;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #7a4a04;
+  margin-bottom: 16px;
+}
+.notice b { color: #8a4a02; }
+
+.grid { display: grid; grid-template-columns: 380px 1fr; gap: 18px; align-items: start; }
+@media (max-width: 880px) { .grid { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 2px rgba(20, 32, 43, .04), 0 8px 22px -14px rgba(20, 32, 43, .18);
+  overflow: hidden;
+}
+.card > h2 {
+  margin: 0;
+  padding: 14px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  background: #fbfcfe;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card > h2::before {
+  content: "";
+  width: 3px; height: 14px; border-radius: 2px;
+  background: var(--brand);
+}
+.card > h2 .tag {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+.card .body { padding: 16px 18px 20px; }
+
+.field { margin-bottom: 16px; }
+.field:last-child { margin-bottom: 0; }
+.field > label, .field > .label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-bottom: 6px;
+}
+.hint {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ink-3);
+  margin-top: 5px;
+}
+
+.switch {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  padding: 7px 0 2px;
+  cursor: pointer;
+}
+.switch input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 2px 0 0;
+  accent-color: var(--brand);
+  cursor: pointer;
+  flex: none;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--line);
+}
+.segmented button {
+  border: 0;
+  background: #f7f9fc;
+  padding: 9px 6px;
+  font-size: 13px;
+  color: var(--ink-2);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .15s, color .15s;
+}
+.segmented button[aria-pressed="true"] {
+  background: var(--brand);
+  color: #fff;
+  font-weight: 600;
+}
+
+.money-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.money-input input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  color: var(--ink);
+  padding: 12px 44px 12px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.money-input input:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(31, 111, 235, .12);
+}
+.money-input .unit {
+  position: absolute;
+  right: 14px;
+  font-size: 13px;
+  color: var(--ink-3);
+  pointer-events: none;
+}
+
+select {
+  width: 100%;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  padding: 10px 12px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%238a99a8' stroke-width='1.6' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+select:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(31, 111, 235, .12); }
+
+.actions { display: flex; gap: 10px; margin-top: 18px; }
+button.btn {
+  flex: 1;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 11px 16px;
+  border-radius: 10px;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: transform .06s, filter .15s;
+}
+button.btn:active { transform: translateY(1px); }
+button.btn.primary { background: var(--brand); color: #fff; }
+button.btn.primary:hover { filter: brightness(1.06); }
+button.btn.ghost { background: #fff; color: var(--ink-2); border-color: var(--line); }
+button.btn.ghost:hover { border-color: #cfd8e3; }
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+@media (max-width: 640px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.kpi {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  background: #fbfcfe;
+}
+.kpi.main {
+  background: linear-gradient(160deg, #eef4ff, #f7fbff);
+  border-color: #cfdff8;
+}
+.kpi .k { font-size: 12px; color: var(--ink-3); margin-bottom: 4px; }
+.kpi .v {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+}
+.kpi.main .v { color: var(--money); }
+.kpi .v small { font-size: 12px; font-weight: 500; color: var(--ink-3); margin-left: 2px; }
+
+table.detail { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.detail td { padding: 9px 0; border-bottom: 1px dashed var(--line); vertical-align: baseline; }
+table.detail tr:last-child td { border-bottom: 0; }
+table.detail td.n { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+table.detail tr.group td {
+  padding-top: 16px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--brand-dark);
+  letter-spacing: .04em;
+  border-bottom: 1px solid var(--line);
+}
+table.detail tr.sub td.n { font-weight: 500; color: var(--ink-2); }
+table.detail tr.total td { font-weight: 700; }
+table.detail tr.total td.n { color: var(--money); font-size: 16px; }
+table.detail .src { font-size: 11.5px; color: var(--ink-3); font-weight: 400; margin-left: 6px; }
+table.detail .zero { color: var(--ink-3); font-weight: 500; }
+
+.banner {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: var(--warn-bg);
+  border: 1px solid #f6d9a0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #7c4a03;
+  margin-bottom: 14px;
+  line-height: 1.55;
+}
+.banner::before { content: "!"; font-weight: 800; color: #d97706; }
+
+.check {
+  margin-top: 14px;
+  border: 1px dashed #cfd8e3;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--ink-2);
+  background: #fafcff;
+}
+.check b { color: var(--ink); }
+
+.proc {
+  font-size: 13.5px;
+  line-height: 1.85;
+  color: var(--ink-2);
+}
+.proc li { margin-bottom: 2px; }
+.proc .eq { color: var(--ink); font-variant-numeric: tabular-nums; }
+.proc .res { color: var(--money); font-weight: 600; }
+.proc .num-li { margin-left: 0; }
+
+details.doc { border-top: 1px solid var(--line); }
+details.doc > summary {
+  cursor: pointer;
+  padding: 13px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-2);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+details.doc > summary::-webkit-details-marker { display: none; }
+details.doc > summary::before {
+  content: "▸";
+  color: var(--ink-3);
+  transition: transform .15s;
+  display: inline-block;
+}
+details.doc[open] > summary::before { transform: rotate(90deg); }
+details.doc .doc-body { padding: 0 18px 18px; font-size: 13.5px; color: var(--ink-2); line-height: 1.8; }
+details.doc h3 { font-size: 13.5px; margin: 16px 0 6px; color: var(--ink); }
+details.doc code {
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 12.5px;
+  background: #f3f6fa;
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: var(--brand-dark);
+}
+details.doc ul { padding-left: 20px; margin: 6px 0; }
+details.doc table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 13px; }
+details.doc th, details.doc td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; }
+details.doc th { background: #f6f9fc; font-weight: 600; color: var(--ink); }
+details.doc .note { font-size: 12.5px; color: var(--ink-3); }
+
+.stack { display: grid; gap: 18px; }
+
+/* ---------- 意见反馈 ---------- */
+.cintro {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: var(--ink-2);
+}
+.mailrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+.mailaddr {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  color: var(--brand-dark);
+  text-decoration: none;
+  border-bottom: 2px solid rgba(31, 111, 235, .22);
+  padding-bottom: 2px;
+  font-variant-numeric: tabular-nums;
+  word-break: break-all;
+}
+.mailaddr:hover { border-bottom-color: var(--brand); }
+.copybtn { flex: 0 0 auto; padding: 8px 16px; font-size: 13px; }
+
+footer.foot {
+  max-width: 1080px;
+  margin: 24px auto 50px;
+  padding: 0 18px;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  line-height: 1.7;
+}
+footer.foot a { color: var(--brand-dark); }
+
+@media print {
+  body { background: #fff; }
+  .topbar { background: #fff; color: #000; border-bottom: 2px solid #000; }
+  .actions, .segmented, select, details.doc > summary { display: none; }
+  details.doc { display: block; }
+  details.doc .doc-body { display: block !important; }
+  .card { box-shadow: none; break-inside: avoid; }
+}
+
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="inner">
+    <div class="brand">
+      <b>快算小工具</b>
+      <h1>劳务费计算器</h1>
+    </div>
+    <div class="sub">增值税 + 城建税 + 个人所得税 · 2026 年 11 月起代扣口径</div>
+    <div class="date" id="today"></div>
+  </div>
+</header>
+
+<main>
+  <div class="notice" role="note">
+    <b>非官方工具</b>：本页按公开税收文件自行实现的算法计算，未接入任何税务系统。
+    计算结果仅供报价、预算与核对参考，<b>最终税额以电子税务局申报表、完税凭证及主管税务机关口径为准</b>。
+  </div>
+  <div class="grid">
+    <!-- 输入 -->
+    <section class="card">
+      <h2>输入数据</h2>
+      <div class="body">
+        <div class="field">
+          <span class="label">按哪个口径算</span>
+          <div class="segmented" id="modeSeg"></div>
+          <div class="hint" id="modeHint">合同、发放表、发票上写的数字不一定是一回事，先选清楚你手上是哪一个。</div>
+        </div>
+
+        <div class="field" id="knownField" hidden>
+          <label for="knownSel">已知的是哪个金额</label>
+          <select id="knownSel"></select>
+          <div class="hint" id="knownHint"></div>
+        </div>
+
+        <div class="field">
+          <label for="amount" id="amountLabel">含税应发金额（价税合计）</label>
+          <div class="money-input">
+            <input id="amount" type="text" inputmode="decimal" autocomplete="off" value="3000" />
+            <span class="unit">元</span>
+          </div>
+          <div class="hint" id="amountHint"></div>
+        </div>
+
+        <div class="field">
+          <label for="citySel">城建税所在地区</label>
+          <select id="citySel"></select>
+          <div class="hint">按单位所在地（市区 / 县城、镇 / 其他）选择，税率不同。</div>
+        </div>
+
+        <div class="field">
+          <label for="vatSel">增值税征收率</label>
+          <select id="vatSel"></select>
+          <div class="hint">自然人按小规模纳税人征收率执行，2026–2027 年减按 1%。</div>
+        </div>
+
+        <div class="field">
+          <label for="borneSel">增值税附加由谁承担</label>
+          <select id="borneSel"></select>
+          <div class="hint">增值税本身是价外税，永远含在价税合计里；这个开关只影响城建税、教育费附加、地方教育附加从谁那里扣。</div>
+        </div>
+
+        <div class="field">
+          <span class="label">附加税费政策开关</span>
+          <label class="switch" for="halveChk">
+            <input type="checkbox" id="halveChk" checked />
+            <span>「六税两费」减半征收（小规模纳税人，2023–2027）</span>
+          </label>
+          <div class="hint">勾选后城建税、教育费附加、地方教育附加各按 50% 征收；不勾则按法定税率全额。</div>
+          <label class="switch" for="eduChk">
+            <input type="checkbox" id="eduChk" checked />
+            <span>教育费附加、地方教育附加免征（当月销售额 ≤10 万元）</span>
+          </label>
+          <div class="hint">财税〔2016〕12 号。判断依据是该自然人当月全部销售额，不是单笔金额；不确定就先取消勾选，按照征留足。</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" id="calcBtn" type="button">计 算</button>
+          <button class="btn ghost" id="resetBtn" type="button">重 置</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="stack">
+      <!-- 结果 -->
+      <section class="card" id="resultCard">
+        <h2>计算结果 <span class="tag">分项均按分四舍五入</span></h2>
+        <div class="body">
+          <div id="warnBox"></div>
+
+          <div class="kpis">
+            <div class="kpi main">
+              <div class="k">个人到手（实发）</div>
+              <div class="v" id="kpiNet"></div>
+            </div>
+            <div class="kpi">
+              <div class="k">单位总支出</div>
+              <div class="v" id="kpiCost"></div>
+            </div>
+            <div class="kpi">
+              <div class="k">发票价税合计</div>
+              <div class="v" id="kpiInvoice"></div>
+            </div>
+            <div class="kpi">
+              <div class="k">税款合计</div>
+              <div class="v" id="kpiTax"></div>
+            </div>
+          </div>
+
+          <table class="detail" id="detail"></table>
+          <div class="check" id="checkBox" hidden></div>
+
+          <div class="actions">
+            <button class="btn ghost" id="copyBtn" type="button">复制结果</button>
+            <button class="btn ghost" type="button" onclick="window.print()">打印 / 存 PDF</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 过程 -->
+      <section class="card">
+        <h2>计算过程说明</h2>
+        <div class="body">
+          <div class="proc" id="proc"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- 依据 -->
+  <section class="card" style="margin-top:18px">
+    <h2>计算公式与规则依据</h2>
+
+    <details class="doc" open>
+      <summary>计算公式</summary>
+      <div class="doc-body">
+        <h3>一、增值税与附加税费</h3>
+        <ul>
+          <li>不含税销售额 = 含税应发 ÷（1 + 征收率）</li>
+          <li>增值税 = 不含税销售额 × 征收率（2026–2027 年征收率 1%，法定 3%）</li>
+          <li><b>城市维护建设税</b> = 增值税 × 7%（市区）/ 5%（县镇）/ 1%（其他）× 50% 减征</li>
+          <li><b>教育费附加</b> = 增值税 × 3% × 50% 减征 = 增值税 × 1.5%</li>
+          <li><b>地方教育附加</b> = 增值税 × 2% × 50% 减征 = 增值税 × 1%</li>
+          <li>三项都<b>以实际缴纳的增值税额为计征依据</b>，同表申报、同一承担方；逐项按分四舍五入后再相加</li>
+          <li><b>教育费附加、地方教育附加免征</b>：月销售额不超过 10 万元（季度 30 万元）的缴纳义务人免征（财税〔2016〕12 号）——判断依据是该自然人当月全部销售额，不是单笔金额</li>
+          <li><b>「六税两费」减半</b>：小规模纳税人城建税、教育费附加、地方教育附加均减半征收（财政部 税务总局公告 2023 年第 12 号，执行至 2027-12-31）</li>
+          <li><b>起征点</b>：每次（日）不含税销售额 1,000 元。未达免征；达到即<b>全额</b>计税（不是只对超出部分计税）</li>
+        </ul>
+        <p class="note">市区 + 照征时的附加合计 = 增值税 ×（3.5% + 1.5% + 1%）= 增值税 × 6%；若两项教育附加免征则只有城建税 3.5%。两个开关都在左侧「附加税费政策开关」里，默认按「减半 + 教育附加免征」。</p>
+        <h3>二、个人所得税（劳务报酬预扣预缴）</h3>
+        <ul>
+          <li>每次收入 ≤ 4,000 元：应纳税所得额 = 收入 − 800 元</li>
+          <li>每次收入 &gt; 4,000 元：应纳税所得额 = 收入 ×（1 − 20%）</li>
+          <li>应纳税额 = 应纳税所得额 × 预扣率 − 速算扣除数</li>
+          <li>个税基数<b>不含增值税</b>，但<b>含单位代付的个税</b>；附加税费不得从个税基数中扣除</li>
+        </ul>
+        <h3>三、税率表（劳务报酬预扣率表二）</h3>
+        <table>
+          <thead><tr><th>级数</th><th>应纳税所得额 X</th><th>预扣率</th><th>速算扣除数</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>0 &lt; X ≤ 20,000</td><td>20%</td><td>0</td></tr>
+            <tr><td>2</td><td>20,000 &lt; X ≤ 50,000</td><td>30%</td><td>2,000</td></tr>
+            <tr><td>3</td><td>X &gt; 50,000</td><td>40%</td><td>7,000</td></tr>
+          </tbody>
+        </table>
+        <h3>四、反算（从任意分项倒推销售额）</h3>
+        <ul>
+          <li><b>已知个人所得税额 T</b>：先还原应纳税所得额 —— T ≤ 4,000 时 ÷20%；4,000 &lt; T ≤ 13,000 时（T+2,000）÷30%；T &gt; 13,000 时（T+7,000）÷40%；再由所得额还原销售额（所得额 ≤ 3,200 时 +800，否则 ÷80%）</li>
+          <li><b>已知增值税额 V</b>：销售额 = V ÷ 征收率</li>
+          <li><b>已知城建税 / 附加税费合计</b>：先 ÷（城建税率 或 城建税率+教育附加率）× 减半系数 还原增值税，再 ÷ 征收率</li>
+          <li><b>已知单位总支出</b>：按（销售额 + 增值税 + 单位承担的附加）逐分回代搜索</li>
+          <li><b>多解区间</b>：税额按分四舍五入，因此同一个税额往往对应一段销售额。例如城建税 1 分的变化要 28.6 元销售额才出现，所以「由城建税反推」天然有 ±14 元误差；页面会给出可行区间并取中点，不当成唯一解</li>
+        </ul>
+        <h3>五、到手金额倒算公式</h3>
+        <ul>
+          <li>恒等式：到手 = 销售额 − 个税 − 附加税费合计（个人承担时）</li>
+          <li>附加税费合计 = 增值税 ×（城建税率 + 教育附加率）× 减半系数，市区照征时 = 增值税 × 6%</li>
+          <li>设 k = 征收率 ×（城建税率 + 教育附加率）× 减半系数（市区照征、1% 征收率时 k = 0.0006；两项教育附加免征时 k = 0.00035；单位承担时 k = 0）</li>
+          <li>销售额 ≤ 4,000：S =（到手 − 160）÷（0.8 − k）</li>
+          <li>4,000 &lt; 销售额 ≤ 25,000：S = 到手 ÷（0.84 − k）</li>
+          <li>25,000 &lt; 销售额 ≤ 62,500：S =（到手 − 2,000）÷（0.76 − k）</li>
+          <li>销售额 &gt; 62,500：S =（到手 − 7,000）÷（0.68 − k）</li>
+        </ul>
+        <p class="note">倒算是代数解，正算是逐项按分四舍五入，两者会有约 1 分钱的尾差（约 18% 的笔数出现）。报销、开票、申报一律以正算数为准；页面已在倒算时给出「建议价税合计」用于消除尾差。</p>
+      </div>
+    </details>
+
+    <details class="doc">
+      <summary>规则来源</summary>
+      <div class="doc-body">
+        <ul>
+          <li><b>代扣范围</b>：研发和技术服务、软件服务、设计服务、咨询服务、广播影视节目（作品）制作服务、文化创意服务、教育医疗服务等七类——税务总局 2026 年第 28 号公告《委托代征管理办法》第一条</li>
+          <li><b>起征点 1,000 元</b>：财政部 税务总局 2026 年第 10 号公告 一(二)；增值税法 23 条（未达起征点免征）</li>
+          <li><b>征收率 1%</b>：2026 年第 10 号公告 三(三)6；增值税法实施条例 7 条</li>
+          <li><b>城建税</b>：城市维护建设税法 4 条（税率 7%/5%/1%）</li>
+          <li><b>教育费附加 3%、地方教育附加 2%</b>：征收教育费附加的暂行规定、财综〔2010〕98 号（地方教育附加）；均以实缴增值税为计征依据</li>
+          <li><b>「六税两费」减半</b>：财政部 税务总局公告 2023 年第 12 号（城建税、教育费附加、地方教育附加、资源税、房产税、城镇土地使用税、印花税、耕地占用税，执行至 2027-12-31）</li>
+          <li><b>教育费附加免征</b>：财税〔2016〕12 号（月销售额 ≤ 10 万元 / 季度 ≤ 30 万元）</li>
+          <li><b>个税预扣</b>：国家税务总局公告 2018 年第 61 号 第八条（预扣率表二）</li>
+          <li><b>扣缴期限</b>：次月 1 日起 15 日内申报；个税汇算次年 3 月 1 日 – 6 月 30 日</li>
+        </ul>
+        <p class="note">以上为公开文件口径；各地对「按次」的认定、是否允许按日合并等执行细节可能不同，正式付款前建议与主管税务机关或 12366 确认。本页为计算工具，不构成税务意见。</p>
+      </div>
+    </details>
+
+    <details class="doc">
+      <summary>三种口径为什么差这么多（同一个「3,000 元」的四种结果）</summary>
+      <div class="doc-body">
+        <table>
+          <thead><tr><th>合同/约定写法</th><th>销售额</th><th>增值税</th><th>城建税</th><th>个税</th><th>到手</th><th>单位支出</th></tr></thead>
+          <tbody>
+            <tr><td>税前含税 3,000</td><td>2,970.30</td><td>29.70</td><td>1.04</td><td>434.06</td><td>2,535.20</td><td>3,000.00</td></tr>
+            <tr><td>税前不含税 3,000</td><td>3,000.00</td><td>30.00</td><td>1.05</td><td>440.00</td><td>2,558.95</td><td>3,030.00</td></tr>
+            <tr><td>到手 3,000（附加个人承担）</td><td>3,551.55</td><td>35.52</td><td>1.24</td><td>550.31</td><td>3,000.00</td><td>3,587.07</td></tr>
+            <tr><td>到手 3,000（附加单位承担）</td><td>3,550.00</td><td>35.50</td><td>1.24</td><td>550.00</td><td>3,000.00</td><td>3,586.74</td></tr>
+          </tbody>
+        </table>
+        <p class="note">同样一句「3,000 元」，到手差 23.75 元、单位支出差 587.07 元。合同必须写明：含税还是不含税、税前还是到手、增值税及附加由谁承担。上表按默认口径（1% 征收率、市区、附加减半、教育费附加免征）计算；若教育附加照征，到手还要再少约 0.75 元（销售额 3,000 时附加合计从 1.05 变成 1.80）。</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- 反馈 -->
+  <section class="card" id="contactCard" style="margin-top:18px">
+    <h2>意见反馈</h2>
+    <div class="body">
+      <p class="cintro">
+        发现算错了、口径跟你那边不一致，或者想加个功能，直接发邮件。评论区暂时没开——
+        留言要能真的存下来就得有一台常驻后端，为这个页面不值当。
+      </p>
+      <div class="mailrow">
+        <a class="mailaddr" href="mailto:2966124085@qq.com?subject=%E5%8A%B3%E5%8A%A1%E8%B4%B9%E8%AE%A1%E7%AE%97%E5%99%A8%E5%8F%8D%E9%A6%88">2966124085@qq.com</a>
+        <button class="btn ghost copybtn" id="copyMail" type="button">复制邮箱</button>
+      </div>
+      <p class="hint" style="margin-top:12px">
+        写得越具体越好：用的是哪个口径（含税应发 / 不含税销售额 / 到手 / 按已知金额反算）、金额多少、
+        你算出来的数，以及本页给出的数。附上截图更快。
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <b>免责声明</b>：本计算器为个人按公开文件自行实现的非官方工具，与税务机关、北京注协等任何机构无关，未接入电子税务局或任何官方系统。
+  计算结果仅用于报价、预算与内部核对；由于四舍五入、地区执行口径、「按次/按月」认定等因素，实际应缴金额可能与本页不同，
+  <b>最终税额以电子税务局申报表、完税凭证及主管税务机关的认定为准</b>。涉税处理有疑问请拨打 12366 或咨询主管税务机关。
+  <br />本工具纯前端计算，数据不上传、不联网、不留痕（关闭页面即清空）。规则版本：2026 年 11 月（增值税法及配套公告 2026 年起施行）。
+</footer>
+
+<script>
+/* ===== src/rules/rules.mjs ===== */
+// 规则数据：与引擎分离，改数值只改这里
+// 每条都带生效期与来源，界面上「规则依据」面板直接展示
+
+const RULES = {
+  vat: {
+    label: '增值税征收率',
+    options: [
+      {
+        value: 0.01,
+        label: '1%（2026-01-01 ～ 2027-12-31 小规模减按征收）',
+        short: '1%',
+        source: '财政部 税务总局公告 2026 年第 10 号 三(三)6；增值税法实施条例 7 条',
+        effectiveFrom: '2026-01-01',
+        effectiveTo: '2027-12-31',
+      },
+      {
+        value: 0.03,
+        label: '3%（法定征收率）',
+        short: '3%',
+        source: '增值税法 12 条；财税〔2016〕36 号',
+        effectiveFrom: '2026-01-01',
+        effectiveTo: null,
+      },
+    ],
+    thresholdPerTime: 1000,
+    thresholdSource: '财政部 税务总局公告 2026 年第 10 号 一(二)：按次纳税起征点为每次（日）销售额 1000 元',
+    thresholdNote: '起征点按「不含税销售额」判断；未达免征，达到即全额计税（不是只对超出部分计税）',
+  },
+  surcharge: {
+    label: '城建税税率（按行政区划）',
+    halve: 0.5,
+    halveSource: '财政部 税务总局公告 2023 年第 12 号：小规模纳税人城建税减半征收',
+    options: [
+      { value: 0.07, label: '市区 7%（减半后相当于增值税的 3.5%）', short: '市区', source: '城市维护建设税法 4 条' },
+      { value: 0.05, label: '县城、镇 5%（减半后 2.5%）', short: '县镇', source: '城市维护建设税法 4 条' },
+      { value: 0.01, label: '其他地区 1%（减半后 0.5%）', short: '其他', source: '城市维护建设税法 4 条' },
+    ],
+    eduNote: '教育费附加 3% + 地方教育附加 2% 与城建税同表申报、同一承担方；是否免征由下方独立开关控制（月销售额 10 万元界限）。',
+  },
+  edu: {
+    label: '教育费附加 / 地方教育附加',
+    halve: 0.5,
+    rates: {
+      edu: 0.03, // 教育费附加 3%
+      local: 0.02, // 地方教育附加 2%
+    },
+    exemptThresholdMonthly: 100000,
+    halveSource:
+      '财政部 税务总局公告 2023 年第 12 号：对增值税小规模纳税人「六税两费」减半征收；城建税、教育费附加、地方教育附加同享，执行至 2027-12-31',
+    exemptSource:
+      '财税〔2016〕12 号：月销售额不超过 10 万元（季度 30 万元）的缴纳义务人，免征教育费附加、地方教育附加、水利建设基金（增值税免税额同样不计入判断口径）',
+    calcBase: '两者均以实际缴纳的增值税额为计征依据，与城建税同表申报、同一承担方',
+    note: '自然人单笔劳务费是否免征，取决于该自然人当月全部销售额是否超过 10 万元；不确定时先按「照征」算，宁多留不留缺口。',
+  },
+  iit: {
+    deductionThreshold: 4000,
+    deductionFixed: 800,
+    deductionRate: 0.2,
+    brackets: [
+      { upTo: 20000, rate: 0.2, quick: 0 },
+      { upTo: 50000, rate: 0.3, quick: 2000 },
+      { upTo: Infinity, rate: 0.4, quick: 7000 },
+    ],
+    source: '国家税务总局公告 2018 年第 61 号 第八条（劳务报酬所得预扣率表二）',
+    note: '每次收入不超过 4,000 元的减除费用 800 元；4,000 元以上的减除 20%。附加税费不得从个税基数中扣除。',
+  },
+  modes: [
+    { value: 'gross', label: '含税应发', hint: '合同/发放表上写的那个数，单位实际支出。系统按 ÷(1+征收率) 剥离增值税。' },
+    { value: 'sales', label: '不含税销售额', hint: '发票上「金额」栏的数字，已经不含增值税。' },
+    { value: 'net', label: '到手金额', hint: '个人实际拿到手的钱。系统倒算需要开多少销售额。' },
+    { value: 'known', label: '按已知金额反算', hint: '手上是某一个税种的税额、或某个总额，让系统反推不含税销售额。' },
+  ],
+  // 反算依据：任何一个分项都能作为已知值倒推销售额
+  known: [
+    { value: 'iit', label: '个人所得税额', hint: '已知这笔劳务费被扣了个税多少，反推收入。个税为 0 时无法唯一确定收入（只能确定 ≤800 元）。' },
+    { value: 'vat', label: '增值税额', hint: '从申报表 / 缴款书上的增值税额反推销售额。' },
+    { value: 'city', label: '城市维护建设税额', hint: '从城建税额反推销售额，按当前所选地区税率与减半系数。' },
+    { value: 'additions', label: '附加税费合计', hint: '城建税 + 教育费附加 + 地方教育附加 三项合计，反推销售额。' },
+    { value: 'unitCost', label: '单位总支出', hint: '单位实际打出去的全部金额（价税合计 + 单位承担的附加税费），反推销售额。' },
+  ],
+  borne: [
+    { value: 'individual', label: '增值税附加由个人承担', hint: '城建税从应发金额里扣，个人到手再少一点（金额很小）。' },
+    { value: 'unit', label: '增值税附加由单位承担', hint: '单位在价税合计之外另付城建税，个人到手不受影响。' },
+  ],
+};
+
+function findVatOption(v) {
+  return RULES.vat.options.find((o) => o.value === v) || RULES.vat.options[0];
+}
+function findCityOption(v) {
+  return RULES.surcharge.options.find((o) => o.value === v) || RULES.surcharge.options[0];
+}
+
+
+/* ===== src/engine/core.mjs ===== */
+// 纯计算引擎：无 DOM、无网络、无副作用。node --test 可直接测。
+
+/** 按分四舍五入（避免二进制浮点的 0.005 向下取整） */
+function round2(x) {
+  if (!Number.isFinite(x)) return 0;
+  return (Math.sign(x) * Math.round((Math.abs(x) + Number.EPSILON) * 100)) / 100;
+}
+
+function num(v, label, warnings) {
+  if (v === '' || v === null || v === undefined) return 0;
+  const n = typeof v === 'number' ? v : Number(String(v).replace(/[,，\s¥￥元]/g, ''));
+  if (!Number.isFinite(n)) {
+    if (warnings) warnings.push(`${label} 不是有效数字，已按 0 处理`);
+    return 0;
+  }
+  if (n < 0) {
+    if (warnings) warnings.push(`${label} 不能为负数，已按 0 处理`);
+    return 0;
+  }
+  return n;
+}
+
+/** 个税五步（61 号公告预扣率表二） */
+function iitSteps(sales) {
+  const { deductionThreshold, deductionFixed, deductionRate, brackets } = RULES.iit;
+  const deduction = sales <= deductionThreshold ? Math.min(deductionFixed, sales) : round2(sales * deductionRate);
+  const taxable = Math.max(0, round2(sales - deduction));
+  const bracket = brackets.find((b) => taxable <= b.upTo) || brackets[brackets.length - 1];
+  const tax = round2(Math.max(0, taxable * bracket.rate - bracket.quick));
+  return { deduction, taxable, rate: bracket.rate, quick: bracket.quick, tax };
+}
+
+/**
+ * 附加税费：城建税 + 教育费附加 + 地方教育附加
+ * 三者同表申报、同一承担方；逐项按分四舍五入后再求和
+ */
+function additionsOf(vat, { cityRate = 0.07, halve = true, eduExempt = true } = {}) {
+  const h = halve ? RULES.edu.halve : 1;
+  const city = round2(vat * cityRate * h);
+  const edu = eduExempt ? 0 : round2(vat * RULES.edu.rates.edu * h);
+  const local = eduExempt ? 0 : round2(vat * RULES.edu.rates.local * h);
+  return { city, edu, local, total: round2(city + edu + local), h };
+}
+
+/** 附加税费合计 ÷ 增值税（倒算系数 k 用） */
+function additionsRatio({ cityRate = 0.07, halve = true, eduExempt = true } = {}) {
+  const h = halve ? RULES.edu.halve : 1;
+  const eduPart = eduExempt ? 0 : RULES.edu.rates.edu + RULES.edu.rates.local;
+  return (cityRate + eduPart) * h;
+}
+
+/**
+ * 正算：已知不含税销售额 → 全部分项
+ * @param {object} p
+ * @param {number} p.sales 不含税销售额
+ * @param {number} p.vatRate 征收率 0.01 / 0.03
+ * @param {number} p.cityRate 城建税税率 0.07/0.05/0.01
+ * @param {'individual'|'unit'} p.borne 附加税费由谁承担
+ * @param {boolean} p.halve 是否适用「六税两费」减半征收
+ * @param {boolean} p.eduExempt 教育费附加、地方教育附加是否免征
+ */
+function fromSales({
+  sales,
+  vatRate = 0.01,
+  cityRate = 0.07,
+  borne = 'individual',
+  halve = true,
+  eduExempt = true,
+  exempt = undefined,
+}) {
+  const S = round2(Math.max(0, sales));
+  const threshold = RULES.vat.thresholdPerTime;
+  const vatExempt = exempt === undefined ? S < threshold : exempt;
+  const vat = vatExempt ? 0 : round2(S * vatRate);
+  const add = vatExempt
+    ? { city: 0, edu: 0, local: 0, total: 0, h: halve ? RULES.edu.halve : 1 }
+    : additionsOf(vat, { cityRate, halve, eduExempt });
+  const steps = iitSteps(S);
+  const net = round2(S - steps.tax - (borne === 'individual' ? add.total : 0));
+  const invoiceTotal = round2(S + vat); // 价税合计
+  const unitCost = round2(invoiceTotal + (borne === 'unit' ? add.total : 0));
+  return {
+    mode: 'sales',
+    sales: S,
+    vatRate,
+    vat,
+    vatExempt,
+    cityRate,
+    halve,
+    eduExempt,
+    additions: add,
+    surcharge: add.city, // 兼容字段：城建税
+    surchargeRate: cityRate * add.h,
+    borne,
+    iit: steps,
+    net,
+    invoiceTotal,
+    unitCost,
+    totalTax: round2(vat + add.total + steps.tax),
+  };
+}
+
+/** 含税应发（价税合计）→ 销售额。返回 {sales, exempt, warning} */
+function salesFromGross(gross, vatRate = 0.01) {
+  const G = Math.max(0, gross);
+  const s = round2(G / (1 + vatRate));
+  // 起征点跳档：剥离增值税后未达 1000 元 → 本笔免征，整笔金额即为销售额
+  if (s < RULES.vat.thresholdPerTime) {
+    return {
+      sales: round2(G),
+      exempt: true,
+      warning:
+        G >= RULES.vat.thresholdPerTime
+          ? `价税合计 ${G.toFixed(2)} 元剥离增值税后仅 ${s.toFixed(2)} 元，未达 1000 元起征点，已按免征处理；但支付额本身 ≥1000 元，建议把金额调到 1000 元以下或 1010 元含税，避免口径争议。`
+          : null,
+    };
+  }
+  return { sales: s, exempt: undefined, warning: null };
+}
+
+/**
+ * 倒算：到手 → 不含税销售额
+ * 恒等式 net = S − T(S) − k·S
+ * k = 征收率 ×（城建税率 + 教育附加合计率）× 减半系数（附加由个人承担时）
+ */
+function salesFromNet(
+  net,
+  { vatRate = 0.01, cityRate = 0.07, borne = 'individual', halve = true, eduExempt = true } = {}
+) {
+  const X = Math.max(0, net);
+  if (X === 0) return 0;
+  const k = borne === 'individual' ? vatRate * additionsRatio({ cityRate, halve, eduExempt }) : 0;
+
+  // 先看是否落在免征区间：V=F=0，此时 k 无效
+  if (X <= 800) return round2(X); // 无个税、无增值税
+  const exemptCandidate = round2((X - 160) / 0.8);
+  if (exemptCandidate < RULES.vat.thresholdPerTime) return exemptCandidate;
+
+  const candidates = [
+    { s: (X - 160) / (0.8 - k), ok: (s) => s > 0 && s <= 4000 },
+    { s: X / (0.84 - k), ok: (s) => s > 4000 && s <= 25000 },
+    { s: (X - 2000) / (0.76 - k), ok: (s) => s > 25000 && s <= 62500 },
+    { s: (X - 7000) / (0.68 - k), ok: (s) => s > 62500 },
+  ];
+  for (const c of candidates) {
+    if (c.ok(c.s)) return round2(c.s);
+  }
+  return round2(X / (1 - k)); // 兜底：极端值
+}
+
+/** 由个人所得税额反推不含税销售额（在 1 分精度内唯一） */
+function salesFromIit(tax) {
+  const T = round2(Math.max(0, tax));
+  if (T === 0) {
+    return { sales: 0, exact: false, warning: '个人所得税额为 0 时收入不唯一（销售额 ≤800 元时个税都为 0），已按 0 显示。' };
+  }
+  let taxable;
+  if (T <= 4000) taxable = T / 0.2;
+  else if (T <= 13000) taxable = (T + 2000) / 0.3;
+  else taxable = (T + 7000) / 0.4;
+  taxable = round2(taxable);
+  const sales = taxable <= 3200 ? round2(taxable + 800) : round2(taxable / 0.8);
+  return { sales, exact: true, taxable, warning: null };
+}
+
+/**
+ * 通用一分精度反解：在闭式解附近逐分回代，取精确命中的最小销售额
+ * @param {number} target 目标金额
+ * @param {(s:number)=>number} fn 由销售额算出该目标金额
+ * @param {number} hint 闭式解近似值
+ */
+function findSalesByTarget(target, fn, hint) {
+  if (!(target > 0)) return { sales: 0, exact: false, range: null };
+  const start = Math.max(0, round2(hint));
+  const hit = (s) => Math.abs(fn(s) - target) < 0.005;
+
+  // 从闭式解出发向两侧逐分搜索：可行区间宽度从 1 分（单位总支出）到 29 元（城建税）不定，
+  // 所以既不能用粗步长（会漏掉窄区间），也不能只扫小窗口（会截断宽区间）。
+  let seed = hit(start) ? start : null;
+  let bestAny = start;
+  let bestErr = Math.abs(fn(start) - target);
+  const MAX = 6000; // 每侧最多 60 元
+  for (let i = 1; i <= MAX && seed === null; i++) {
+    for (const s of [round2(start + i / 100), round2(start - i / 100)]) {
+      if (s < 0) continue;
+      const err = Math.abs(fn(s) - target);
+      if (err < bestErr - 1e-9) {
+        bestErr = err;
+        bestAny = s;
+      }
+      if (err < 0.005) {
+        seed = s;
+        break;
+      }
+    }
+  }
+
+  if (seed === null) {
+    return { sales: bestAny, exact: false, range: null, residual: round2(fn(bestAny) - target) };
+  }
+
+  // 找到命中点后向两侧延伸，得到完整可行区间，取中点作为估计值
+  let lo = seed;
+  let hi = seed;
+  for (let i = 1; i <= MAX; i++) {
+    const s = round2(seed - i / 100);
+    if (s < 0 || !hit(s)) break;
+    lo = s;
+  }
+  for (let i = 1; i <= MAX; i++) {
+    const s = round2(seed + i / 100);
+    if (!hit(s)) break;
+    hi = s;
+  }
+  const mid = round2((lo + hi) / 2);
+  return { sales: hit(mid) ? mid : seed, exact: true, range: [lo, hi], seed };
+}
+
+/** 从任意分项反推不含税销售额 */
+function salesFromKnown({
+  known = 'iit',
+  value = 0,
+  vatRate = 0.01,
+  cityRate = 0.07,
+  borne = 'individual',
+  halve = true,
+  eduExempt = true,
+}) {
+  const V = round2(Math.max(0, value));
+  if (V === 0) {
+    return { sales: 0, exact: false, warning: '已知金额为 0 时无法唯一确定销售额，已按 0 显示。' };
+  }
+  const ratio = additionsRatio({ cityRate, halve, eduExempt });
+  const h = halve ? RULES.edu.halve : 1;
+  const opts = { vatRate, cityRate, borne, halve, eduExempt };
+  const calc = (s) => fromSales({ ...opts, sales: s });
+
+  switch (known) {
+    case 'iit':
+      return salesFromIit(V);
+    case 'vat':
+      return findSalesByTarget(V, (s) => calc(s).vat, V / vatRate);
+    case 'city':
+      return findSalesByTarget(V, (s) => calc(s).additions.city, V / (cityRate * h) / vatRate);
+    case 'additions':
+      return findSalesByTarget(V, (s) => calc(s).additions.total, V / ratio / vatRate);
+    case 'unitCost':
+      return findSalesByTarget(
+        V,
+        (s) => calc(s).unitCost,
+        V / (1 + vatRate + (borne === 'unit' ? vatRate * ratio : 0))
+      );
+    case 'invoiceTotal':
+      return findSalesByTarget(V, (s) => calc(s).invoiceTotal, V / (1 + vatRate));
+    default:
+      return { sales: 0, exact: false, warning: `未知的反算依据：${known}` };
+  }
+}
+
+/** 从一次计算结果中取出指定的已知分项值 */
+function knownValueOf(r, known) {
+  switch (known) {
+    case 'iit':
+      return r.iit.tax;
+    case 'vat':
+      return r.vat;
+    case 'city':
+      return r.additions.city;
+    case 'additions':
+      return r.additions.total;
+    case 'unitCost':
+      return r.unitCost;
+    case 'invoiceTotal':
+      return r.invoiceTotal;
+    default:
+      return 0;
+  }
+}
+
+/**
+ * 统一入口
+ * @param {object} p
+ * @param {'gross'|'sales'|'net'} p.mode
+ * @param {number} p.amount
+ */
+function compute({
+  mode = 'gross',
+  amount = 0,
+  known = 'iit',
+  vatRate = 0.01,
+  cityRate = 0.07,
+  borne = 'individual',
+  halve = true,
+  eduExempt = true,
+}) {
+  const warnings = [];
+  const A = round2(Math.max(0, num(amount, '金额', warnings)));
+  let sales;
+  let exempt;
+  let solved = null;
+  if (mode === 'sales') {
+    sales = A;
+  } else if (mode === 'net') {
+    sales = salesFromNet(A, { vatRate, cityRate, borne, halve, eduExempt });
+    exempt = sales < RULES.vat.thresholdPerTime ? true : undefined;
+  } else if (mode === 'known') {
+    solved = salesFromKnown({ known, value: A, vatRate, cityRate, borne, halve, eduExempt });
+    sales = solved.sales;
+    if (solved.warning) warnings.push(solved.warning);
+    exempt = sales < RULES.vat.thresholdPerTime ? true : undefined;
+  } else {
+    const g = salesFromGross(A, vatRate);
+    sales = g.sales;
+    exempt = g.exempt;
+    if (g.warning) warnings.push(g.warning);
+  }
+
+  const base = fromSales({ sales, vatRate, cityRate, borne, halve, eduExempt, exempt });
+  if (base.vatExempt && A > 0 && mode !== 'gross' && mode !== 'known') {
+    warnings.length = 0;
+    warnings.push('本笔不含税销售额未达 1000 元起征点：增值税及附加税费全部免征，只计算个人所得税。');
+  }
+
+  // 反算：把已知金额与正算回代值比对
+  let knownCheck = null;
+  if (mode === 'known') {
+    const back = knownValueOf(base, known);
+    knownCheck = { known, target: A, back, diff: round2(A - back), exact: Math.abs(A - back) < 0.005 };
+    if (!knownCheck.exact) {
+      warnings.push(
+        `按 1 分精度无法精确生成 ${A.toFixed(2)} 元的该金额（最接近为 ${back.toFixed(2)} 元）。常见原因：该销售额未达 1000 元起征点，或该税额本身不是按本页当前参数算出来的。`
+      );
+    }
+  }
+
+  // 尾差校验：把正算结果与本笔的“锚定值”对比
+  const anchor = mode === 'net' ? A : base.net;
+  const diff = round2(anchor - base.net);
+  const target = mode === 'net' ? A : null;
+
+  return {
+    ...base,
+    mode,
+    known,
+    knownCheck,
+    solved,
+    input: A,
+    warnings,
+    anchorLabel:
+      mode === 'net' ? '目标到手' : mode === 'gross' ? '含税应发' : mode === 'known' ? '已知金额' : '不含税销售额',
+    check: {
+      // 正算(base.sales) 得到的到手 = base.net
+      recomputedNet: base.net,
+      targetNet: target,
+      diff: mode === 'known' && knownCheck ? knownCheck.diff : diff,
+      // 把尾差加回价税合计即可精确命中目标到手
+      suggestedInvoiceTotal: target === null ? null : round2(base.invoiceTotal + diff),
+      suggestedUnitCost: target === null ? null : round2(base.unitCost + diff),
+      suggestedSales: target === null ? null : round2(base.sales + diff / (1 + vatRate)),
+    },
+  };
+}
+
+
+/* ===== src/app.js ===== */
+
+const $ = (s) => document.querySelector(s);
+const fmt = (n) =>
+  Number(n || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const pct = (n) => `${(n * 100).toFixed(n * 100 % 1 === 0 ? 0 : 2)}%`;
+
+const state = {
+  mode: 'gross',
+  known: 'iit',
+  vatRate: 0.01,
+  cityRate: 0.07,
+  borne: 'individual',
+  halve: true,
+  eduExempt: true,
+  amount: '3000',
+};
+
+/* ---------- 输入区渲染 ---------- */
+
+function renderSegments() {
+  const box = $('#modeSeg');
+  box.innerHTML = RULES.modes
+    .map(
+      (m) =>
+        `<button type="button" data-mode="${m.value}" aria-pressed="${m.value === state.mode}">${m.label}</button>`
+    )
+    .join('');
+  box.querySelectorAll('button').forEach((b) => {
+    b.addEventListener('click', () => {
+      state.mode = b.dataset.mode;
+      renderSegments();
+      setHint();
+      run();
+    });
+  });
+}
+
+function renderSelects() {
+  $('#citySel').innerHTML = RULES.surcharge.options
+    .map((o) => `<option value="${o.value}">${o.label}</option>`)
+    .join('');
+  $('#vatSel').innerHTML = RULES.vat.options
+    .map((o) => `<option value="${o.value}">${o.label}</option>`)
+    .join('');
+  $('#borneSel').innerHTML = RULES.borne
+    .map((o) => `<option value="${o.value}">${o.label}</option>`)
+    .join('');
+  $('#knownSel').innerHTML = RULES.known
+    .map((o) => `<option value="${o.value}">${o.label}</option>`)
+    .join('');
+  $('#citySel').value = String(state.cityRate);
+  $('#vatSel').value = String(state.vatRate);
+  $('#borneSel').value = state.borne;
+  $('#knownSel').value = state.known;
+}
+
+function syncToggles() {
+  $('#halveChk').checked = state.halve;
+  $('#eduChk').checked = state.eduExempt;
+}
+
+const AMOUNT_LABELS = {
+  gross: '含税应发金额（价税合计）',
+  sales: '不含税销售额（票面金额）',
+  net: '到手金额（实发）',
+};
+
+function setHint() {
+  const m = RULES.modes.find((x) => x.value === state.mode);
+  const k = RULES.known.find((x) => x.value === state.known) || RULES.known[0];
+  $('#knownField').hidden = state.mode !== 'known';
+  $('#knownHint').textContent = k.hint;
+  $('#knownSel').value = state.known;
+  $('#amountLabel').textContent = state.mode === 'known' ? k.label : AMOUNT_LABELS[state.mode];
+  $('#amountHint').textContent = state.mode === 'known' ? k.hint : m.hint;
+  $('#modeHint').textContent = m.hint;
+  $('#amount').value = state.amount;
+}
+
+/* ---------- 计算与渲染 ---------- */
+
+function run() {
+  const r = compute({
+    mode: state.mode,
+    amount: state.amount,
+    known: state.known,
+    vatRate: state.vatRate,
+    cityRate: state.cityRate,
+    borne: state.borne,
+    halve: state.halve,
+    eduExempt: state.eduExempt,
+  });
+
+  const regionLabel =
+    RULES.surcharge.options.find((o) => o.value === state.cityRate)?.short || '市区';
+  const surchargePct = pct(r.surchargeRate);
+  const hPct = pct(r.additions.h);
+  const borneSelf = state.borne === 'individual';
+  const add = r.additions;
+
+  /* 顶部提示 */
+  const warnBox = $('#warnBox');
+  if (r.warnings.length) {
+    warnBox.innerHTML = r.warnings.map((w) => `<div class="banner">${w}</div>`).join('');
+  } else {
+    warnBox.innerHTML =
+      r.vatExempt && r.sales > 0
+        ? '<div class="banner">本笔不含税销售额未达 1,000 元起征点：增值税与城建税免征，只计算个人所得税。</div>'
+        : '';
+  }
+
+  /* KPI */
+  $('#kpiNet').innerHTML = `${fmt(r.net)}<small>元</small>`;
+  $('#kpiCost').innerHTML = `${fmt(r.unitCost)}<small>元</small>`;
+  $('#kpiInvoice').innerHTML = `${fmt(r.invoiceTotal)}<small>元</small>`;
+  $('#kpiTax').innerHTML = `${fmt(r.totalTax)}<small>元</small>`;
+
+  /* 明细表 */
+  $('#detail').innerHTML = `
+    <tr><td>不含税销售额（票面「金额」栏）<span class="src">个税与增值税的共同基数</span></td><td class="n">${fmt(r.sales)}</td></tr>
+    <tr class="group"><td colspan="2">增值税及附加 <span class="src">${r.vatExempt ? '本笔免征' : `征收率 ${pct(r.vatRate)}，附加减征 ${hPct}`}</span></td></tr>
+    <tr class="sub"><td>增值税</td><td class="n ${r.vat ? '' : 'zero'}">${fmt(r.vat)}</td></tr>
+    <tr class="sub"><td>城市维护建设税<span class="src">增值税 × ${regionLabel} ${pct(r.cityRate)} × ${hPct} = ${surchargePct}</span></td><td class="n ${add.city ? '' : 'zero'}">${fmt(add.city)}</td></tr>
+    <tr class="sub"><td>教育费附加<span class="src">增值税 × 3% × ${hPct}${add.eduExempt ? '（本笔免征）' : ''}</span></td><td class="n ${add.edu ? '' : 'zero'}">${fmt(add.edu)}</td></tr>
+    <tr class="sub"><td>地方教育附加<span class="src">增值税 × 2% × ${hPct}${add.eduExempt ? '（本笔免征）' : ''}</span></td><td class="n ${add.local ? '' : 'zero'}">${fmt(add.local)}</td></tr>
+    <tr class="sub"><td>附加税费合计<span class="src">三项逐项舍入后相加</span></td><td class="n">${fmt(add.total)}</td></tr>
+    <tr class="group"><td colspan="2">个人所得税 <span class="src">61 号公告预扣率表二</span></td></tr>
+    <tr class="sub"><td>① 扣除费用</td><td class="n">${fmt(r.iit.deduction)}</td></tr>
+    <tr class="sub"><td>② 应纳税所得额</td><td class="n">${fmt(r.iit.taxable)}</td></tr>
+    <tr class="sub"><td>③ 适用税率</td><td class="n">${pct(r.iit.rate)}</td></tr>
+    <tr class="sub"><td>④ 速算扣除数</td><td class="n">${fmt(r.iit.quick)}</td></tr>
+    <tr class="sub"><td>⑤ 应纳个人所得税</td><td class="n">${fmt(r.iit.tax)}</td></tr>
+    <tr class="group"><td colspan="2">金额汇总</td></tr>
+    <tr><td>发票价税合计（单位实际开票额）</td><td class="n">${fmt(r.invoiceTotal)}</td></tr>
+    <tr><td>附加税费承担方（城建税 + 两项教育附加）</td><td class="n" style="font-weight:500;color:var(--ink-2)">${borneSelf ? '个人（从应发中扣）' : '单位（价税合计外另付）'}</td></tr>
+    <tr class="total"><td>个人到手（实发）</td><td class="n">${fmt(r.net)}</td></tr>
+    <tr class="total"><td>单位总支出</td><td class="n">${fmt(r.unitCost)}</td></tr>
+  `;
+
+  /* 校验行：倒算看尾差，反算看回代 */
+  const checkBox = $('#checkBox');
+  if (state.mode === 'net') {
+    checkBox.hidden = false;
+    checkBox.innerHTML = `
+      校验：按 <b>${fmt(r.sales)}</b> 元销售额逐项四舍五入正算，到手 = <b>${fmt(r.check.recomputedNet)}</b> 元，
+      尾差 = <b>${r.check.diff >= 0 ? '+' : ''}${fmt(r.check.diff)}</b> 元。<br />
+      若必须精确到分，请把${borneSelf ? '价税合计' : '单位总支出'}发到 <b>${fmt(borneSelf ? r.check.suggestedInvoiceTotal : r.check.suggestedUnitCost)}</b> 元（销售额 ${fmt(r.check.suggestedSales)} 元）。
+    `;
+  } else if (state.mode === 'known') {
+    const kLabel = (RULES.known.find((x) => x.value === state.known) || RULES.known[0]).label;
+    const kc = r.knownCheck;
+    const rg = r.solved && r.solved.range;
+    const wide = rg && rg[1] - rg[0] > 0.02;
+    checkBox.hidden = false;
+    checkBox.innerHTML = kc.exact
+      ? `反算回代：按 <b>${fmt(r.sales)}</b> 元销售额正算，${kLabel} = <b>${fmt(kc.back)}</b> 元 与输入一致 ✓` +
+        (wide
+          ? `<br />该${kLabel}对应的销售额是<b>一个区间</b>：${fmt(rg[0])} ～ ${fmt(rg[1])} 元（跨度 ${fmt(rg[1] - rg[0])} 元）内的任一数值都能得出同一个${kLabel}。已取区间中点，若你有其他信息（如合同金额）落在此区间内，应直接用那个数。`
+          : '')
+      : `该金额无法由当前参数精确生成（最接近 ${fmt(kc.back)} 元）。请检查征收率 / 地区 / 减半 / 免征开关是否与该税额的实际口径一致。`;
+  } else {
+    checkBox.hidden = true;
+  }
+
+  /* 计算过程 */
+  $('#proc').innerHTML = renderProcess(r, regionLabel, surchargePct, borneSelf);
+
+  window.__lastResult = r;
+}
+
+function renderProcess(r, regionLabel, surchargePct, borneSelf) {
+  const L = [];
+  const T = RULES.vat.thresholdPerTime;
+  const add = r.additions;
+  const hPct = pct(add.h);
+
+  if (state.mode === 'gross') {
+    L.push(
+      `① 剥离增值税：不含税销售额 = ${fmt(r.input)} ÷ (1 + ${pct(r.vatRate)}) = <span class="eq">${fmt(r.sales)}</span> 元`
+    );
+  } else if (state.mode === 'sales') {
+    L.push(`① 不含税销售额直接取输入值 = <span class="eq">${fmt(r.sales)}</span> 元`);
+  } else if (state.mode === 'known') {
+    const kLabel = (RULES.known.find((x) => x.value === state.known) || RULES.known[0]).label;
+    const rg = r.solved && r.solved.range;
+    let detail = '';
+    if (state.known === 'iit') {
+      const rate = r.iit.rate;
+      detail = `应纳税所得额 = ${fmt(r.input)} ÷ ${pct(rate)} = ${fmt(r.solved.taxable || r.iit.taxable)} 元 → 销售额 = ${
+        (r.solved.taxable || 0) <= 3200 ? `${fmt(r.solved.taxable || 0)} + 800` : `${fmt(r.solved.taxable || 0)} ÷ 80%`
+      } = ${fmt(r.sales)} 元`;
+    } else if (state.known === 'vat') {
+      detail = `销售额 = ${fmt(r.input)} ÷ ${pct(r.vatRate)} ≈ ${fmt(r.input / r.vatRate)} 元`;
+    } else if (state.known === 'city' || state.known === 'additions') {
+      const ratio =
+        state.known === 'city' ? r.cityRate * (state.halve ? 0.5 : 1) : (r.cityRate + (state.eduExempt ? 0 : 0.05)) * (state.halve ? 0.5 : 1);
+      detail = `反推增值税 = ${fmt(r.input)} ÷ ${pct(ratio)} ≈ ${fmt(r.input / ratio)} 元 → 销售额 ≈ ${fmt(
+        r.input / ratio / r.vatRate
+      )} 元`;
+    } else {
+      detail = `按 1 + ${pct(r.vatRate)}${borneSelf ? '' : ` + 附加费率`} 剥离 ≈ ${fmt(r.sales)} 元`;
+    }
+    L.push(`① 由${kLabel} ${fmt(r.input)} 元反推销售额：${detail}`);
+    if (rg && rg[1] - rg[0] > 0.02) {
+      L.push(
+        `&nbsp;&nbsp;&nbsp;逐分回代后可行区间 = ${fmt(rg[0])} ～ ${fmt(rg[1])} 元（跨度 ${fmt(rg[1] - rg[0])} 元），取中点 <span class="eq">${fmt(r.sales)}</span> 元`
+      );
+    }
+  } else {
+    L.push(
+      `① 倒算不含税销售额：已知到手 ${fmt(r.input)} 元，按分档系数反解，得销售额 = <span class="eq">${fmt(r.sales)}</span> 元`
+    );
+  }
+
+  L.push(
+    `② 起征点判断：不含税销售额 ${fmt(r.sales)} 元 ${r.sales >= T ? '≥' : '<'} ${fmt(T)} 元 → <span class="res">${r.vatExempt ? '免征增值税及附加' : '全额计税'}</span>`
+  );
+
+  if (!r.vatExempt) {
+    L.push(`③ 增值税 = ${fmt(r.sales)} × ${pct(r.vatRate)} = <span class="eq">${fmt(r.vat)}</span> 元`);
+    L.push(
+      `④ 附加税费（均以实缴增值税为计征依据，${state.halve ? '六税两费减半征收' : '不减半、按法定税率全额征收'}）：<br />` +
+        `&nbsp;&nbsp;&nbsp;城建税 = ${fmt(r.vat)} × ${regionLabel} ${pct(r.cityRate)} × ${hPct} = ${fmt(add.city)} 元<br />` +
+        `&nbsp;&nbsp;&nbsp;教育费附加 = ${fmt(r.vat)} × 3% × ${hPct} = ${fmt(add.edu)} 元${add.eduExempt ? '（月销售额 ≤10 万元，免征）' : ''}<br />` +
+        `&nbsp;&nbsp;&nbsp;地方教育附加 = ${fmt(r.vat)} × 2% × ${hPct} = ${fmt(add.local)} 元${add.eduExempt ? '（免征）' : ''}<br />` +
+        `&nbsp;&nbsp;&nbsp;附加合计 = <span class="eq">${fmt(add.total)}</span> 元`
+    );
+  } else {
+    L.push('③ 增值税 = 0.00 元，④ 附加税费 = 0.00 元（未达起征点，随增值税一并免征）');
+  }
+
+  const ded =
+    r.sales <= 4000
+      ? `销售额 ${fmt(r.sales)} 元 ≤ 4,000 元 → 扣除费用 = ${fmt(r.iit.deduction)} 元（固定 800 元，收入不足 800 元时按实扣）`
+      : `销售额 ${fmt(r.sales)} 元 > 4,000 元 → 扣除费用 = ${fmt(r.sales)} × 20% = ${fmt(r.iit.deduction)} 元`;
+  L.push(`⑤ 个人所得税五步：`);
+  L.push(`&nbsp;&nbsp;&nbsp;扣除费用：${ded}`);
+  L.push(
+    `&nbsp;&nbsp;&nbsp;应纳税所得额 = ${fmt(r.sales)} − ${fmt(r.iit.deduction)} = <span class="eq">${fmt(r.iit.taxable)}</span> 元`
+  );
+  L.push(
+    `&nbsp;&nbsp;&nbsp;适用税率 ${pct(r.iit.rate)}，速算扣除数 ${fmt(r.iit.quick)} 元`
+  );
+  L.push(
+    `&nbsp;&nbsp;&nbsp;应纳个税 = ${fmt(r.iit.taxable)} × ${pct(r.iit.rate)} − ${fmt(r.iit.quick)} = <span class="res">${fmt(r.iit.tax)}</span> 元`
+  );
+
+  L.push(
+    `⑥ 个人到手 = 销售额 − 个税${borneSelf ? ' − 附加税费合计' : ''} = ${fmt(r.sales)} − ${fmt(r.iit.tax)}${borneSelf ? ` − ${fmt(add.total)}` : ''} = <span class="res">${fmt(r.net)}</span> 元`
+  );
+  L.push(`⑦ 发票价税合计 = ${fmt(r.sales)} + ${fmt(r.vat)} = <span class="eq">${fmt(r.invoiceTotal)}</span> 元`);
+  L.push(
+    `⑧ 单位总支出 = ${fmt(r.invoiceTotal)}${borneSelf ? '' : ` + 附加税费 ${fmt(add.total)}`} = <span class="eq">${fmt(r.unitCost)}</span> 元`
+  );
+
+  return `<ol style="padding-left:0;list-style:none;margin:0">${L.map((x) => `<li class="num-li">${x}</li>`).join('')}</ol>`;
+}
+
+/* ---------- 事件绑定 ---------- */
+
+function bind() {
+  const amountEl = $('#amount');
+  amountEl.addEventListener('input', () => {
+    state.amount = amountEl.value;
+    run();
+  });
+  $('#citySel').addEventListener('change', (e) => {
+    state.cityRate = Number(e.target.value);
+    run();
+  });
+  $('#vatSel').addEventListener('change', (e) => {
+    state.vatRate = Number(e.target.value);
+    run();
+  });
+  $('#borneSel').addEventListener('change', (e) => {
+    state.borne = e.target.value;
+    run();
+  });
+  $('#halveChk').addEventListener('change', (e) => {
+    state.halve = e.target.checked;
+    run();
+  });
+  $('#knownSel').addEventListener('change', (e) => {
+    state.known = e.target.value;
+    setHint();
+    run();
+  });
+  $('#eduChk').addEventListener('change', (e) => {
+    state.eduExempt = e.target.checked;
+    run();
+  });
+  $('#calcBtn').addEventListener('click', () => {
+    run();
+    document.querySelector('#resultCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+  $('#resetBtn').addEventListener('click', () => {
+    state.amount = '3000';
+    state.mode = 'gross';
+    state.known = 'iit';
+    state.vatRate = 0.01;
+    state.cityRate = 0.07;
+    state.borne = 'individual';
+    state.halve = true;
+    state.eduExempt = true;
+    renderSegments();
+    renderSelects();
+    syncToggles();
+    setHint();
+    run();
+  });
+  $('#copyBtn').addEventListener('click', async () => {
+    const r = window.__lastResult;
+    if (!r) return;
+    const text = [
+      `不含税销售额：${fmt(r.sales)} 元`,
+      `增值税（${pct(r.vatRate)}）：${fmt(r.vat)} 元`,
+      `城市维护建设税：${fmt(r.surcharge)} 元`,
+      `个人所得税：${fmt(r.iit.tax)} 元`,
+      `发票价税合计：${fmt(r.invoiceTotal)} 元`,
+      `个人到手：${fmt(r.net)} 元`,
+      `单位总支出：${fmt(r.unitCost)} 元`,
+    ].join('\n');
+    try {
+      await navigator.clipboard.writeText(text);
+      $('#copyBtn').textContent = '已复制 ✓';
+      setTimeout(() => ($('#copyBtn').textContent = '复制结果'), 1600);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+      $('#copyBtn').textContent = '已复制 ✓';
+      setTimeout(() => ($('#copyBtn').textContent = '复制结果'), 1600);
+    }
+  });
+}
+
+/* ---------- 意见反馈：复制邮箱 ---------- */
+
+function initContact() {
+  const btn = $('#copyMail');
+  if (!btn) return;
+  const mail = '2966124085@qq.com';
+  btn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(mail);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = mail;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    btn.textContent = '已复制 ✓';
+    setTimeout(() => (btn.textContent = '复制邮箱'), 1600);
+  });
+}
+
+function boot() {
+  $('#today').textContent = new Date().toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  renderSegments();
+  renderSelects();
+  syncToggles();
+  setHint();
+  bind();
+  run();
+  initContact();
+}
+
+boot();
+
+</script>
+
+<footer style="margin:40px 0 0;padding:16px 18px;border-top:1px solid #e3e6ec;font:13.5px/1.7 -apple-system,'Segoe UI','Microsoft YaHei',sans-serif;color:#7b8496;text-align:center">
+  本站由 <a href="/" style="color:#1a6ef5;text-decoration:none">顺手工具箱</a> 维护 ·
+  <a href="/about.html" style="color:#1a6ef5;text-decoration:none">关于</a> ·
+  <a href="/contact.html" style="color:#1a6ef5;text-decoration:none">联系</a> ·
+  <a href="/privacy.html" style="color:#1a6ef5;text-decoration:none">隐私政策</a>
+</footer>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>哈希校验（SHA） - 顺手工具箱</title>
+<meta name="description" content="算文本或文件的 SHA 值，核对下载是否完整 不用登录、不上传服务器，浏览器里直接算完">
+<link rel="stylesheet" href="/assets/style.css">
+<!-- ADSENSE_HEAD: 审核通过后在这里放 AdSense 代码 -->
+</head>
+<body data-tool="hash">
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="/index.html">顺手<i>工具箱</i></a>
+    <nav class="nav"><a href="/index.html">首页</a><a href="/tools/index.html" class="on">全部工具</a><a href="/articles/index.html">使用笔记</a><a href="/about.html">关于</a></nav>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+<div class="crumb"><a href="/index.html">首页</a> / <a href="/tools/index.html">全部工具</a> / 哈希校验（SHA）</div>
+<h1>🧾 哈希校验（SHA）</h1>
+<p class="lead">算文本或文件的 SHA 值，核对下载是否完整</p>
+<div class="panel" style="margin:14px 0">
+
+<div class="row">
+  <select id="hash-algo" style="width:200px">
+    <option value="SHA-256">SHA-256（最常用）</option>
+    <option value="SHA-1">SHA-1（兼容旧系统）</option>
+    <option value="SHA-384">SHA-384</option>
+    <option value="SHA-512">SHA-512</option>
+  </select>
+  <button id="hash-run">计算</button>
+  <button class="ghost" id="hash-copy">复制</button>
+</div>
+<label class="f">文本</label>
+<textarea id="hash-in" style="min-height:90px" placeholder="输入要计算哈希的文本"></textarea>
+<label class="f">或者选一个文件（只在本机读取）</label>
+<input type="file" id="hash-file">
+<pre class="out" id="hash-out"></pre>
+<p class="hint" id="hash-msg"></p>
+
+</div>
+<div class="doc">
+<h2>哈希用来干什么</h2>
+<p>校验文件完整性：下载完对一下官方公布的 SHA-256，一致说明没被篡改、没传坏。或者比对两份配置是否「逻辑上完全相同」——哈希不同则内容必有差异。</p>
+<h2>算法怎么选</h2>
+<ul>
+<li><strong>SHA-256</strong>：默认选它，够安全也够快。</li>
+<li><strong>SHA-1</strong>：已被证明可构造碰撞，只用于兼容老系统，不要用于安全场景。</li>
+<li><strong>SHA-384 / SHA-512</strong>：更长的输出，安全裕度更高，速度略慢。</li>
+<li><strong>MD5</strong>：只用于判断「文件是否相同」这类非对抗场景，绝不能用于校验下载包的完整性。</li>
+</ul>
+<h2>一个常见误解</h2>
+<p>哈希不是加密，不可逆。但简单文本（比如常见密码）的哈希可以被彩虹表反查，所以密码存储要用加盐 + 慢哈希（bcrypt、scrypt、Argon2），而不是直接 SHA-256。</p>
+<h2>实现细节</h2>
+<p>使用浏览器原生 WebCrypto。注意它只在 HTTPS 或 localhost 下可用——用 <code>file://</code> 直接打开本地 HTML 会拿不到 <code>crypto.subtle</code>。</p>
+<div class="faq"><details><summary>文件的哈希要下载完整文件才能算吗？</summary><p>是的。哈希是逐字节计算的，必须读完全部内容。大文件会占用一些内存和几秒时间。</p></details><details><summary>为什么同样的文本，我算出来和别人不一样？</summary><p>多半是编码或换行差异：Windows 的 CRLF 与 Unix 的 LF，或者末尾多了一个换行。</p></details><details><summary>支持 MD5 吗？</summary><p>WebCrypto 不提供 MD5。需要用 MD5 的场景（老接口签名）请用专门的库。</p></details></div>
+</div>
+<div class="card" style="margin-top:26px">
+  <b>其他工具</b>
+  <div class="grid" style="margin-top:10px">
+    <a class="tool-card" href="/tools/json.html"><em>🧩</em><b>JSON 格式化 / 校验</b><span>粘贴一段 JSON，立刻看出哪里多了一个逗号</span></a><a class="tool-card" href="/tools/timestamp.html"><em>⏱</em><b>时间戳转换</b><span>秒 / 毫秒 / 日期互转，顺手给出「几天前」</span></a><a class="tool-card" href="/tools/base64.html"><em>🔐</em><b>Base64 / URL 编解码</b><span>中文不会乱码的 Base64，一并处理 URL 参数</span></a><a class="tool-card" href="/tools/case.html"><em>🔤</em><b>命名风格转换</b><span>camelCase / snake_case / kebab-case 一次转好</span></a><a class="tool-card" href="/tools/color.html"><em>🎨</em><b>颜色格式转换</b><span>HEX / RGB / HSL 互转，顺带算文字可读性</span></a><a class="tool-card" href="/tools/csvjson.html"><em>📊</em><b>CSV ↔ JSON</b><span>Excel 复制出来的表格，直接变 JSON</span></a>
+  </div>
+</div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div>© <span id="year">2026</span> 顺手工具箱　·　不用登录、不上传服务器，浏览器里直接算完</div>
+    <nav>
+      <a href="/about.html">关于</a>
+      <a href="/contact.html">联系</a>
+      <a href="/privacy.html">隐私政策</a>
+      <a href="/articles/index.html">使用笔记</a>
+    </nav>
+  </div>
+</footer>
+<script src="/assets/tools.js"></script>
+</body>
+</html>

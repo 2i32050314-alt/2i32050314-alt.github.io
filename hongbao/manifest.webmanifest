@@ -1,0 +1,15 @@
+{
+  "name": "红包上写什么",
+  "short_name": "红包写什么",
+  "description": "选场合、选关系，给出红包封面题字、落款、背面小字、微信备注和见面那句，可生成图片存手机。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f2ea",
+  "theme_color": "#b31d1d",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
