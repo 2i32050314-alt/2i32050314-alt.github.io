@@ -8,4 +8,4 @@ User-agent: *
 Allow: /
 Disallow: /assets/
 
-Sitemap: https://2i32050314-alt.github.io/sitemap.xml
+Sitemap: https://shunshou.org.cn/sitemap.xml
