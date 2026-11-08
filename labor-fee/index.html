@@ -621,6 +621,67 @@ footer.foot a { color: var(--brand-dark); }
     </details>
   </section>
 
+  <!-- 常见问题（可见内容 + FAQPage 结构化数据） -->
+  <section class="card" id="faq">
+    <h2>常见问题</h2>
+    <div class="body">
+    <details class="doc"><summary>劳务报酬和工资薪金有什么区别？</summary><div class="doc-body"><p>劳务报酬是个人独立提供劳务、不属于任职受雇的所得；工资薪金是任职受雇的所得。两者的预扣方式不同：劳务报酬按次预扣，适用 20%、30%、40% 三级预扣率；工资薪金按月累计预扣。</p></div></details>
+    <details class="doc"><summary>每次劳务报酬要交哪些税？</summary><div class="doc-body"><p>三块：增值税（小规模纳税人 1%，或法定 3%）、城建税及教育费附加、地方教育附加，以及个人所得税（由支付方预扣预缴）。</p></div></details>
+    <details class="doc"><summary>增值税起征点的 1,000 元，是只对超出部分计税吗？</summary><div class="doc-body"><p>不是。按次（日）销售额未达 1,000 元（不含税）免征增值税；一旦达到，就按全额计算，不是只对超出部分计税。</p></div></details>
+    <details class="doc"><summary>个人所得税具体怎么算？</summary><div class="doc-body"><p>每次收入不超过 4,000 元的，减除费用 800 元；超过 4,000 元的，减除 20% 的费用。余额为应纳税所得额，按 20%（不超过 2 万元）、30%（2 万至 5 万元，速算扣除数 2,000）、40%（超过 5 万元，速算扣除数 7,000）三级预扣。</p></div></details>
+    <details class="doc"><summary>教育费附加为什么有时候是 0？</summary><div class="doc-body"><p>月销售额不超过 10 万元（季度 30 万元）的缴纳义务人，免征教育费附加和地方教育附加；小规模纳税人还可减半征收。所以同样是 3,000 元，有的人要交、有的人不交，取决于当月全部销售额。</p></div></details>
+      <p class="note">以上为公开文件口径；各地对「按次」的认定、是否允许按日合并等执行细节可能不同，正式付款前建议与主管税务机关或 12366 确认。本页为计算工具，不构成税务意见。</p>
+    </div>
+  </section>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "劳务报酬和工资薪金有什么区别？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "劳务报酬是个人独立提供劳务、不属于任职受雇的所得；工资薪金是任职受雇的所得。两者的预扣方式不同：劳务报酬按次预扣，适用 20%、30%、40% 三级预扣率；工资薪金按月累计预扣。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "每次劳务报酬要交哪些税？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "三块：增值税（小规模纳税人 1%，或法定 3%）、城建税及教育费附加、地方教育附加，以及个人所得税（由支付方预扣预缴）。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "增值税起征点的 1,000 元，是只对超出部分计税吗？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "不是。按次（日）销售额未达 1,000 元（不含税）免征增值税；一旦达到，就按全额计算，不是只对超出部分计税。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "个人所得税具体怎么算？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "每次收入不超过 4,000 元的，减除费用 800 元；超过 4,000 元的，减除 20% 的费用。余额为应纳税所得额，按 20%（不超过 2 万元）、30%（2 万至 5 万元，速算扣除数 2,000）、40%（超过 5 万元，速算扣除数 7,000）三级预扣。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "教育费附加为什么有时候是 0？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "月销售额不超过 10 万元（季度 30 万元）的缴纳义务人，免征教育费附加和地方教育附加；小规模纳税人还可减半征收。所以同样是 3,000 元，有的人要交、有的人不交，取决于当月全部销售额。"
+      }
+    }
+  ]
+}
+  </script>
+
   <!-- 反馈 -->
   <section class="card" id="contactCard" style="margin-top:18px">
     <h2>意见反馈</h2>
